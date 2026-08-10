@@ -19,7 +19,7 @@ app.add_middleware(
         "http://localhost:5173",
         "http://127.0.0.1:5173",
         "http://192.168.0.18:5173",
-        "https://agreed-playlist-albums-rubber.trycloudflare.com"
+        "https://agreed-playlist-albums-rubber.trycloudflare.com",
         "https://nightguard-tau.vercel.app"
     ],
     allow_credentials=True,
