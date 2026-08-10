@@ -1,4 +1,4 @@
 const API_BASE_URL =
-  "https://production-creation-quantitative-nutten.trycloudflare.com";
+  "https://nightguard-api-7s36.onrender.com";
 
 export default API_BASE_URL;
