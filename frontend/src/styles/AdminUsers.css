@@ -1,0 +1,44 @@
+.admin-users{
+    min-height:100vh;
+    background:#0f0b11;
+    color:white;
+    padding:40px;
+}
+
+.admin-users-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+}
+
+.admin-users-header button{
+    background:#e83e8c;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:#231d24;
+    border-radius:12px;
+    overflow:hidden;
+}
+
+th{
+    background:#e83e8c;
+    padding:16px;
+}
+
+td{
+    padding:14px;
+    border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+tr:hover{
+    background:#2c2630;
+}

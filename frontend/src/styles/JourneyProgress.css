@@ -1,0 +1,123 @@
+.journey-progress-card {
+    margin-top: 24px;
+    padding: 20px 22px;
+    border-radius: 18px;
+
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(59, 130, 246, 0.28);
+}
+
+
+/* =====================================
+   Header
+===================================== */
+
+.journey-progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 14px;
+}
+
+.journey-progress-header h3 {
+    margin: 0;
+    color: #93c5fd;
+}
+
+.journey-progress-header span {
+    font-size: 22px;
+    font-weight: 700;
+    color: white;
+}
+
+
+/* =====================================
+   Progress Bar
+===================================== */
+
+.journey-progress-bar {
+    width: 100%;
+    height: 14px;
+
+    background: #1e293b;
+    border-radius: 30px;
+
+    overflow: hidden;
+}
+
+.journey-progress-fill {
+    height: 100%;
+
+    background: linear-gradient(
+        90deg,
+        #2563eb,
+        #60a5fa
+    );
+
+    transition: width 0.5s ease;
+}
+
+
+/* =====================================
+   Distance Information
+===================================== */
+
+.journey-progress-details {
+    margin-top: 18px;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+
+    align-items: center;
+}
+
+.journey-progress-details > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    text-align: center;
+}
+
+.journey-progress-details small {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #94a3b8;
+}
+
+.journey-progress-details strong {
+    display: block;
+
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+
+/* =====================================
+   Mobile
+===================================== */
+
+@media (max-width: 600px) {
+
+    .journey-progress-card {
+        padding: 16px;
+    }
+
+    .journey-progress-details {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+
+    .journey-progress-details small {
+        font-size: 11px;
+    }
+
+    .journey-progress-details strong {
+        font-size: 15px;
+    }
+}

@@ -1,0 +1,233 @@
+.admin-contacts-page {
+    min-height: 100vh;
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(236, 72, 153, 0.28),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #080808,
+            #151015,
+            #260916
+        );
+    color: white;
+}
+
+.admin-contacts-header {
+    min-height: 75px;
+    padding: 16px 6%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(8, 8, 8, 0.82);
+    border-bottom: 1px solid rgba(236, 72, 153, 0.3);
+    backdrop-filter: blur(15px);
+}
+
+.admin-contacts-header h2 {
+    color: #ec4899;
+}
+
+.admin-contacts-back-btn {
+    padding: 11px 18px;
+    border-radius: 10px;
+    background: transparent;
+    color: white;
+    border: 1px solid #ec4899;
+    font-weight: 600;
+}
+
+.admin-contacts-back-btn:hover {
+    background: #ec4899;
+}
+
+.admin-contacts-content {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 50px 0;
+}
+
+.admin-contacts-intro {
+    margin-bottom: 30px;
+}
+
+.admin-contacts-label {
+    color: #ec4899;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+}
+
+.admin-contacts-intro h1 {
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+.admin-contacts-intro > p:last-child {
+    color: #d1d5db;
+    line-height: 1.7;
+}
+
+.admin-contacts-summary {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.admin-contact-summary-card {
+    padding: 22px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(236, 72, 153, 0.25);
+}
+
+.admin-contact-summary-card span {
+    display: block;
+    color: #d1d5db;
+    margin-bottom: 8px;
+}
+
+.admin-contact-summary-card strong {
+    color: #f9a8d4;
+    font-size: 32px;
+}
+
+.admin-contacts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+}
+
+.admin-contact-card {
+    padding: 25px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(236, 72, 153, 0.25);
+    backdrop-filter: blur(15px);
+    transition: 0.3s ease;
+}
+
+.admin-contact-card:hover {
+    transform: translateY(-5px);
+    border-color: #ec4899;
+    box-shadow: 0 16px 30px rgba(236, 72, 153, 0.18);
+}
+
+.admin-contact-card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.admin-contact-avatar {
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(236, 72, 153, 0.16);
+    border: 1px solid rgba(236, 72, 153, 0.35);
+    font-size: 27px;
+}
+
+.admin-contact-id {
+    color: #ec4899;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+}
+
+.admin-contact-card-header h2 {
+    color: #f9a8d4;
+    margin-top: 5px;
+}
+
+.admin-contact-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+}
+
+.admin-contact-details > div {
+    padding: 15px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.admin-contact-details span {
+    display: block;
+    color: #f9a8d4;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 7px;
+}
+
+.admin-contact-details p {
+    color: #e5e7eb;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+.admin-contacts-message,
+.admin-contacts-empty {
+    padding: 50px 20px;
+    text-align: center;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(236, 72, 153, 0.25);
+}
+
+.admin-contacts-error {
+    color: #fca5a5;
+}
+
+@media (max-width: 850px) {
+    .admin-contacts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 650px) {
+    .admin-contacts-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-contact-details {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 520px) {
+    .admin-contacts-header {
+        padding: 14px 18px;
+    }
+
+    .admin-contacts-header h2 {
+        font-size: 18px;
+    }
+
+    .admin-contacts-back-btn {
+        padding: 9px 12px;
+        font-size: 12px;
+    }
+
+    .admin-contacts-content {
+        width: 92%;
+        padding: 35px 0;
+    }
+
+    .admin-contacts-intro h1 {
+        font-size: 31px;
+    }
+
+    .admin-contact-card {
+        padding: 20px;
+    }
+}

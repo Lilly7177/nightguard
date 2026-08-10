@@ -1,0 +1,104 @@
+.register-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0B0B0B, #1A1A1A, #EC4899);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+}
+
+.register-card {
+    width: 100%;
+    max-width: 450px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(236,72,153,0.35);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 40px rgba(236,72,153,0.25);
+}
+
+.register-card h1 {
+    color: #EC4899;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 40px;
+}
+
+.register-card p {
+    text-align: center;
+    color: #E5E7EB;
+    margin-bottom: 30px;
+}
+
+.register-card input {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 18px;
+    border: 1px solid rgba(236,72,153,0.3);
+    border-radius: 10px;
+    font-size: 16px;
+    outline: none;
+    box-sizing: border-box;
+    background: rgba(255,255,255,0.08);
+    color: white;
+    transition: 0.3s;
+}
+
+.register-card input::placeholder {
+    color: #D1D5DB;
+}
+
+.register-card input:focus {
+    border-color: #EC4899;
+    box-shadow: 0 0 10px rgba(236,72,153,0.4);
+}
+
+.register-btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    background: #EC4899;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.register-btn:hover {
+    background: #DB2777;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(236,72,153,0.4);
+}
+
+.login-link {
+    margin-top: 20px;
+    text-align: center;
+    color: white;
+}
+
+.login-link span {
+    color: #EC4899;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.login-link span:hover {
+    text-decoration: underline;
+}
+
+.success {
+    margin-top: 20px;
+    text-align: center;
+    color: #4ADE80;
+    font-weight: bold;
+}
+
+.error {
+    margin-top: 20px;
+    text-align: center;
+    color: #F87171;
+    font-weight: bold;
+}

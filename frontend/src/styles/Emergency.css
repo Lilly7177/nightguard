@@ -1,0 +1,289 @@
+.emergency-page {
+    min-height: 100vh;
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(236, 72, 153, 0.3),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #080808,
+            #151015,
+            #260916
+        );
+    color: white;
+}
+
+.emergency-header {
+    min-height: 75px;
+    padding: 16px 6%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(8, 8, 8, 0.8);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(236, 72, 153, 0.3);
+}
+
+.emergency-logo {
+    color: #ec4899;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.emergency-back-btn {
+    padding: 11px 18px;
+    border-radius: 10px;
+    color: white;
+    background: transparent;
+    border: 1px solid rgba(236, 72, 153, 0.7);
+    font-weight: 600;
+}
+
+.emergency-back-btn:hover {
+    background: #ec4899;
+}
+
+.emergency-content {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 55px 0;
+}
+
+.emergency-intro {
+    margin-bottom: 35px;
+}
+
+.emergency-label {
+    color: #ec4899;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+}
+
+.emergency-intro h1 {
+    font-size: 42px;
+    margin-bottom: 12px;
+}
+
+.emergency-intro > p:last-child {
+    max-width: 720px;
+    color: #d1d5db;
+    line-height: 1.7;
+}
+
+.emergency-layout {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 28px;
+}
+
+.sos-panel,
+.emergency-form-card {
+    border-radius: 22px;
+    padding: 35px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(236, 72, 153, 0.28);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
+}
+
+.sos-panel {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.sos-ring {
+    width: 245px;
+    height: 245px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid rgba(239, 68, 68, 0.35);
+    animation: sosPulse 2s infinite;
+    margin-bottom: 28px;
+}
+
+.sos-button {
+    width: 175px;
+    height: 175px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ef4444, #be123c);
+    color: white;
+    font-size: 43px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    box-shadow: 0 15px 35px rgba(239, 68, 68, 0.45);
+}
+
+.sos-button:hover {
+    transform: scale(1.06);
+}
+
+.sos-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.sos-panel h2 {
+    color: #fda4af;
+    margin-bottom: 10px;
+}
+
+.sos-panel p {
+    color: #d1d5db;
+    line-height: 1.6;
+}
+
+.emergency-form-card h2 {
+    color: #f9a8d4;
+    margin-bottom: 25px;
+}
+
+.emergency-form-card label {
+    display: block;
+    margin-bottom: 9px;
+    font-weight: 600;
+    color: #f3f4f6;
+}
+
+.emergency-form-card input,
+.emergency-form-card textarea {
+    width: 100%;
+    padding: 15px;
+    border-radius: 11px;
+    border: 1px solid rgba(236, 72, 153, 0.35);
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+    font-size: 15px;
+    outline: none;
+}
+
+.emergency-form-card textarea {
+    resize: vertical;
+    margin-bottom: 20px;
+}
+
+.emergency-form-card input:focus,
+.emergency-form-card textarea:focus {
+    border-color: #ec4899;
+    box-shadow: 0 0 12px rgba(236, 72, 153, 0.35);
+}
+
+.location-input-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.location-btn {
+    padding: 13px 18px;
+    border-radius: 11px;
+    background: transparent;
+    color: white;
+    border: 1px solid #ec4899;
+    font-weight: 600;
+}
+
+.location-btn:hover {
+    background: #ec4899;
+}
+
+.send-alert-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 11px;
+    background: #ec4899;
+    color: white;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.send-alert-btn:hover {
+    background: #db2777;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(236, 72, 153, 0.35);
+}
+
+.emergency-status {
+    margin-top: 18px;
+    padding: 14px;
+    border-radius: 10px;
+    text-align: center;
+    background: rgba(236, 72, 153, 0.14);
+    border: 1px solid rgba(236, 72, 153, 0.35);
+    color: #fbcfe8;
+}
+
+@keyframes sosPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 28px rgba(239, 68, 68, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}
+
+@media (max-width: 850px) {
+    .emergency-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 560px) {
+    .emergency-header {
+        padding: 14px 18px;
+    }
+
+    .emergency-logo {
+        font-size: 19px;
+    }
+
+    .emergency-back-btn {
+        padding: 9px 12px;
+        font-size: 12px;
+    }
+
+    .emergency-content {
+        width: 92%;
+        padding: 35px 0;
+    }
+
+    .emergency-intro h1 {
+        font-size: 31px;
+    }
+
+    .sos-panel,
+    .emergency-form-card {
+        padding: 23px;
+    }
+
+    .sos-ring {
+        width: 205px;
+        height: 205px;
+    }
+
+    .sos-button {
+        width: 145px;
+        height: 145px;
+        font-size: 34px;
+    }
+
+    .location-input-row {
+        grid-template-columns: 1fr;
+    }
+}

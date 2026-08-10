@@ -1,0 +1,218 @@
+.settings-page {
+    min-height: 100vh;
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(236, 72, 153, 0.3),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #080808,
+            #151015,
+            #260916
+        );
+    color: white;
+}
+
+.settings-header {
+    min-height: 75px;
+    padding: 16px 6%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(8, 8, 8, 0.8);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(236, 72, 153, 0.3);
+}
+
+.settings-logo {
+    color: #ec4899;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.settings-back-btn {
+    padding: 11px 18px;
+    border-radius: 10px;
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(236, 72, 153, 0.7);
+    font-weight: 600;
+}
+
+.settings-back-btn:hover {
+    background: #ec4899;
+}
+
+.settings-content {
+    width: 90%;
+    max-width: 960px;
+    margin: auto;
+    padding: 55px 0;
+}
+
+.settings-intro {
+    margin-bottom: 30px;
+}
+
+.settings-label {
+    color: #ec4899;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+}
+
+.settings-intro h1 {
+    font-size: 42px;
+    margin-bottom: 12px;
+}
+
+.settings-intro > p:last-child {
+    color: #d1d5db;
+    line-height: 1.7;
+}
+
+.settings-card {
+    padding: 34px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(236, 72, 153, 0.28);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+}
+
+.settings-card h2 {
+    color: #f9a8d4;
+    margin-bottom: 28px;
+    font-size: 27px;
+}
+
+.settings-card form {
+    width: 100%;
+}
+
+.settings-form-group {
+    width: 100%;
+    margin-bottom: 22px;
+}
+
+.settings-form-group label {
+    display: block;
+    margin-bottom: 9px;
+    color: #f9a8d4;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.settings-form-group input {
+    display: block;
+    width: 100%;
+    min-height: 54px;
+    padding: 14px 16px;
+    border-radius: 11px;
+    border: 1px solid rgba(236, 72, 153, 0.35);
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+    font-family: inherit;
+    font-size: 16px;
+    outline: none;
+    transition: 0.3s ease;
+}
+
+.settings-form-group input::placeholder {
+    color: #9ca3af;
+}
+
+.settings-form-group input:focus {
+    border-color: #ec4899;
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.12);
+}
+
+.settings-form-group input:disabled {
+    background: rgba(255, 255, 255, 0.04);
+    color: #9ca3af;
+    opacity: 0.75;
+    cursor: not-allowed;
+}
+
+.settings-form-group small {
+    display: block;
+    margin-top: 8px;
+    color: #9ca3af;
+    font-size: 13px;
+}
+
+.settings-save-btn {
+    width: 100%;
+    min-height: 54px;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 11px;
+    background: linear-gradient(
+        135deg,
+        #ec4899,
+        #db2777
+    );
+    color: white;
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.settings-save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(236, 72, 153, 0.35);
+}
+
+.settings-save-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.settings-status {
+    margin-top: 20px;
+    padding: 14px 16px;
+    border-radius: 11px;
+    text-align: center;
+    background: rgba(236, 72, 153, 0.14);
+    border: 1px solid rgba(236, 72, 153, 0.35);
+    color: #fbcfe8;
+    font-weight: 600;
+}
+
+@media (max-width: 520px) {
+    .settings-header {
+        padding: 14px 18px;
+    }
+
+    .settings-logo {
+        font-size: 19px;
+    }
+
+    .settings-back-btn {
+        padding: 9px 12px;
+        font-size: 12px;
+    }
+
+    .settings-content {
+        width: 92%;
+        padding: 35px 0;
+    }
+
+    .settings-intro h1 {
+        font-size: 31px;
+    }
+
+    .settings-card {
+        padding: 22px;
+    }
+
+    .settings-card h2 {
+        font-size: 23px;
+    }
+}

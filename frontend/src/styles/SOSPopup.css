@@ -1,0 +1,139 @@
+.sos-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.82);
+    backdrop-filter:blur(12px);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+
+.sos-popup{
+    width:95%;
+    max-width:520px;
+    padding:40px;
+    border-radius:24px;
+    background:#111827;
+    border:2px solid #ef4444;
+    text-align:center;
+    animation:sosPopup .35s ease;
+}
+
+.sos-icon{
+    font-size:65px;
+    margin-bottom:15px;
+}
+
+.sos-popup h2{
+    color:#ef4444;
+    margin-bottom:12px;
+}
+
+.sos-popup p{
+    color:#d1d5db;
+    line-height:1.7;
+}
+
+.countdown-circle{
+    width:120px;
+    height:120px;
+    margin:28px auto;
+    border-radius:50%;
+    border:6px solid #ef4444;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:42px;
+    font-weight:700;
+    color:white;
+    animation:pulse 1s infinite;
+}
+
+.countdown-text{
+    color:#fca5a5;
+    font-weight:600;
+    margin-bottom:30px;
+}
+
+.sos-buttons{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+}
+
+.safe-btn,
+.help-btn{
+    padding:16px;
+    border:none;
+    border-radius:12px;
+    color:white;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.safe-btn{
+    background:#22c55e;
+}
+
+.safe-btn:hover{
+    background:#16a34a;
+}
+
+.help-btn{
+    background:#ef4444;
+}
+
+.help-btn:hover{
+    background:#dc2626;
+}
+
+@keyframes pulse{
+
+    0%{
+        transform:scale(1);
+    }
+
+    50%{
+        transform:scale(1.08);
+    }
+
+    100%{
+        transform:scale(1);
+    }
+
+}
+
+@keyframes sosPopup{
+
+    from{
+        opacity:0;
+        transform:scale(.85);
+    }
+
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+
+}
+
+@media(max-width:600px){
+
+    .sos-popup{
+        padding:28px;
+    }
+
+    .sos-buttons{
+        grid-template-columns:1fr;
+    }
+
+    .countdown-circle{
+        width:95px;
+        height:95px;
+        font-size:34px;
+    }
+
+}
