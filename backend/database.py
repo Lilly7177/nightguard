@@ -11,9 +11,7 @@ def get_database():
         port=int(os.getenv("DB_PORT", "3306")),
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
-        database=os.getenv("DB_NAME"),
-        ssl_ca=os.getenv("DB_SSL_CA"),
-        ssl_verify_cert=True
+        database=os.getenv("DB_NAME")
     )
 
     return connection
