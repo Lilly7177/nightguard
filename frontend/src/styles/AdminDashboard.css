@@ -1,106 +1,2067 @@
-.admin-dashboard{
-    min-height:100vh;
+* {
+  box-sizing: border-box;
+}
+
+.admin-control-panel {
+  min-height: 100vh;
+  display: flex;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(236, 72, 153, 0.17),
+      transparent 30%
+    ),
+    linear-gradient(
+      135deg,
+      #060606,
+      #110b11,
+      #250817
+    );
+  color: white;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.admin-sidebar {
+  width: 245px;
+  min-height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1000;
+
+  display: flex;
+  flex-direction: column;
+
+  background:
+    linear-gradient(
+      180deg,
+      #070707,
+      #120a11,
+      #080608
+    );
+
+  border-right:
+    1px solid rgba(236, 72, 153, 0.24);
+
+  box-shadow:
+    8px 0 28px rgba(0, 0, 0, 0.35);
+}
+
+.admin-sidebar-brand {
+  min-height: 88px;
+  padding: 18px 20px;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  border-bottom:
+    1px solid rgba(236, 72, 153, 0.2);
+}
+
+.admin-brand-icon {
+  width: 44px;
+  height: 44px;
+
+  border-radius: 12px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background:
+    rgba(236, 72, 153, 0.14);
+
+  border:
+    1px solid rgba(236, 72, 153, 0.3);
+
+  font-size: 23px;
+}
+
+.admin-sidebar-brand h2 {
+  margin: 0;
+  color: white;
+  font-size: 20px;
+}
+
+.admin-sidebar-brand span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #f9a8d4;
+
+  font-size: 9px;
+
+  font-weight: 800;
+
+  letter-spacing: 2.4px;
+}
+
+.admin-sidebar-nav {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+
+  padding: 18px 11px;
+}
+
+.admin-sidebar-nav button,
+.admin-sidebar-bottom button {
+  width: 100%;
+
+  min-height: 46px;
+
+  padding: 11px 14px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  border: none;
+
+  border-radius: 9px;
+
+  background: transparent;
+
+  color: #ddd3dc;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  text-align: left;
+
+  transition: 0.2s ease;
+}
+
+.admin-sidebar-nav button:hover {
+  color: white;
+
+  background:
+    rgba(236, 72, 153, 0.1);
+}
+
+.admin-sidebar-nav button.active {
+  color: white;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ec4899,
+      #be185d
+    );
+
+  box-shadow:
+    0 8px 18px
+    rgba(236, 72, 153, 0.2);
+}
+
+.admin-sidebar-nav button > span:first-child {
+  width: 24px;
+
+  text-align: center;
+}
+
+.sidebar-alert-count,
+.sidebar-live-count {
+  margin-left: auto;
+
+  min-width: 22px;
+
+  height: 22px;
+
+  padding: 0 6px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 12px;
+
+  color: white;
+
+  font-size: 10px;
+
+  font-weight: 900;
+}
+
+.sidebar-alert-count {
+  background: #ef4444;
+}
+
+.sidebar-live-count {
+  background: #16a34a;
+}
+
+.admin-sidebar-bottom {
+  padding: 13px 11px 22px;
+
+  border-top:
+    1px solid rgba(236, 72, 153, 0.2);
+}
+
+.admin-sidebar-bottom button {
+  color: #fda4af;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.admin-main-area {
+  width: calc(100% - 245px);
+
+  margin-left: 245px;
+
+  min-height: 100vh;
+}
+
+
+/* =========================================================
+   TOP BAR
+========================================================= */
+
+.admin-topbar {
+  min-height: 86px;
+
+  position: sticky;
+
+  top: 0;
+
+  z-index: 700;
+
+  padding: 14px 28px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  background:
+    rgba(8, 7, 8, 0.95);
+
+  border-bottom:
+    1px solid rgba(236, 72, 153, 0.23);
+
+  backdrop-filter: blur(16px);
+}
+
+.admin-topbar-left {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+}
+
+.admin-topbar-left h1 {
+  margin: 0;
+
+  color: white;
+
+  font-size: 24px;
+}
+
+.admin-topbar-left p {
+  margin: 4px 0 0;
+
+  color: #a99da8;
+
+  font-size: 12px;
+}
+
+.admin-topbar-right {
+  display: flex;
+  align-items: center;
+
+  gap: 18px;
+}
+
+.admin-notification-button {
+  position: relative;
+
+  width: 43px;
+
+  height: 43px;
+
+  border:
+    1px solid rgba(236, 72, 153, 0.3);
+
+  border-radius: 50%;
+
+  background:
+    rgba(236, 72, 153, 0.08);
+
+  color: white;
+
+  font-size: 18px;
+
+  cursor: pointer;
+}
+
+.admin-notification-button > span {
+  position: absolute;
+
+  top: -5px;
+
+  right: -4px;
+
+  min-width: 19px;
+
+  height: 19px;
+
+  padding: 0 4px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 12px;
+
+  background: #ef4444;
+
+  color: white;
+
+  font-size: 9px;
+
+  font-weight: 900;
+}
+
+.admin-profile {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+}
+
+.admin-avatar {
+  width: 39px;
+
+  height: 39px;
+
+  border-radius: 50%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background:
+    rgba(236, 72, 153, 0.14);
+}
+
+.admin-profile strong {
+  display: block;
+
+  color: white;
+
+  font-size: 12px;
+}
+
+.admin-profile span {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #9c929b;
+
+  font-size: 10px;
+}
+
+.admin-mobile-menu {
+  display: none;
+}
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+.admin-dashboard-content {
+  width: 100%;
+
+  max-width: 1650px;
+
+  margin: auto;
+
+  padding: 24px 27px 50px;
+}
+
+.admin-dashboard-loading,
+.admin-dashboard-error {
+  padding: 40px;
+
+  text-align: center;
+
+  border:
+    1px solid rgba(236, 72, 153, 0.25);
+
+  border-radius: 14px;
+
+  background:
+    rgba(255, 255, 255, 0.05);
+}
+
+.admin-dashboard-error {
+  color: #fca5a5;
+}
+
+
+/* =========================================================
+   SUMMARY CARDS
+========================================================= */
+
+.admin-overview-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(5, minmax(0, 1fr));
+
+  gap: 13px;
+
+  margin-bottom: 18px;
+}
+
+.overview-card {
+  min-height: 110px;
+
+  padding: 16px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  border-radius: 13px;
+
+  border:
+    1px solid rgba(236, 72, 153, 0.2);
+
+  background:
+    rgba(255, 255, 255, 0.055);
+
+  backdrop-filter: blur(12px);
+}
+
+.overview-icon {
+  width: 43px;
+
+  height: 43px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 11px;
+
+  background:
+    rgba(236, 72, 153, 0.13);
+
+  font-size: 20px;
+}
+
+.overview-card span {
+  display: block;
+
+  color: #c6bac4;
+
+  font-size: 11px;
+}
+
+.overview-card strong {
+  display: block;
+
+  margin: 4px 0;
+
+  color: #f9a8d4;
+
+  font-size: 26px;
+}
+
+.overview-card strong.live-number {
+  color: #4ade80;
+}
+
+.overview-card small {
+  color: #928790;
+
+  font-size: 9px;
+}
+
+
+/* =========================================================
+   LIVE LAYOUT
+========================================================= */
+
+.admin-live-layout {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.65fr)
+    minmax(310px, 0.65fr);
+
+  gap: 18px;
+}
+
+.admin-dashboard-panel {
+  min-width: 0;
+
+  padding: 18px;
+
+  border-radius: 14px;
+
+  border:
+    1px solid rgba(236, 72, 153, 0.22);
+
+  background:
+    rgba(255, 255, 255, 0.05);
+
+  backdrop-filter: blur(14px);
+}
+
+.admin-panel-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 15px;
+
+  margin-bottom: 14px;
+}
+
+.panel-label {
+  display: block;
+
+  color: #ec4899;
+
+  font-size: 9px;
+
+  font-weight: 900;
+
+  letter-spacing: 1.5px;
+}
+
+.admin-panel-heading h2 {
+  margin: 4px 0 0;
+
+  color: white;
+
+  font-size: 18px;
+}
+
+.live-map-count {
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 6px 9px;
+
+  border-radius: 15px;
+
+  border:
+    1px solid rgba(34, 197, 94, 0.3);
+
+  background:
+    rgba(34, 197, 94, 0.1);
+
+  color: #86efac;
+
+  font-size: 9px;
+
+  font-weight: 900;
+}
+
+.live-pulse-dot {
+  width: 8px;
+
+  height: 8px;
+
+  border-radius: 50%;
+
+  background: #22c55e;
+
+  box-shadow:
+    0 0 10px #22c55e;
+
+  animation:
+    adminLivePulse 1.4s infinite;
+}
+
+
+/* =========================================================
+   REAL ADMIN MAP
+========================================================= */
+
+.admin-real-map {
+  position: relative;
+
+  height: 430px;
+
+  overflow: hidden;
+
+  border-radius: 12px;
+
+  border:
+    1px solid rgba(236, 72, 153, 0.25);
+
+  background: #111;
+}
+
+.admin-leaflet-map {
+  width: 100%;
+
+  height: 100%;
+
+  z-index: 1;
+}
+
+.admin-no-live-overlay {
+  position: absolute;
+
+  z-index: 500;
+
+  left: 50%;
+
+  top: 50%;
+
+  transform:
+    translate(-50%, -50%);
+
+  width: 270px;
+
+  max-width: 80%;
+
+  padding: 22px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 7px;
+
+  text-align: center;
+
+  border-radius: 13px;
+
+  border:
+    1px solid rgba(236, 72, 153, 0.28);
+
+  background:
+    rgba(10, 8, 10, 0.92);
+
+  backdrop-filter: blur(10px);
+}
+
+.admin-no-live-overlay > div {
+  font-size: 30px;
+}
+
+.admin-no-live-overlay strong {
+  color: white;
+}
+
+.admin-no-live-overlay span {
+  color: #aaa0aa;
+
+  font-size: 11px;
+}
+
+
+/* =========================================================
+   LIVE MAP MARKERS
+========================================================= */
+
+.admin-live-marker-wrapper {
+  background: transparent !important;
+
+  border: none !important;
+}
+
+.admin-live-marker {
+  width: 38px;
+
+  height: 38px;
+
+  position: relative;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.admin-live-marker-center {
+  position: relative;
+
+  z-index: 3;
+
+  width: 17px;
+
+  height: 17px;
+
+  border-radius: 50%;
+
+  border: 3px solid white;
+
+  box-shadow:
+    0 4px 12px
+    rgba(0, 0, 0, 0.4);
+}
+
+.admin-live-marker-pulse {
+  position: absolute;
+
+  width: 38px;
+
+  height: 38px;
+
+  border-radius: 50%;
+
+  animation:
+    adminMarkerPulse 1.7s infinite;
+}
+
+.admin-live-marker.risk-low
+.admin-live-marker-center {
+  background: #22c55e;
+}
+
+.admin-live-marker.risk-medium
+.admin-live-marker-center {
+  background: #eab308;
+}
+
+.admin-live-marker.risk-high
+.admin-live-marker-center {
+  background: #f97316;
+}
+
+.admin-live-marker.risk-critical
+.admin-live-marker-center {
+  background: #ef4444;
+}
+
+.admin-live-marker.risk-low
+.admin-live-marker-pulse {
+  background:
+    rgba(34, 197, 94, 0.3);
+}
+
+.admin-live-marker.risk-medium
+.admin-live-marker-pulse {
+  background:
+    rgba(234, 179, 8, 0.32);
+}
+
+.admin-live-marker.risk-high
+.admin-live-marker-pulse {
+  background:
+    rgba(249, 115, 22, 0.32);
+}
+
+.admin-live-marker.risk-critical
+.admin-live-marker-pulse {
+  background:
+    rgba(239, 68, 68, 0.4);
+}
+
+
+/* =========================================================
+   MAP POPUP
+========================================================= */
+
+.admin-map-popup {
+  min-width: 160px;
+}
+
+.admin-map-popup strong {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #111827;
+
+  font-size: 13px;
+}
+
+.admin-map-popup p {
+  margin: 4px 0;
+
+  color: #374151;
+
+  font-size: 11px;
+}
+
+.admin-map-popup button {
+  width: 100%;
+
+  margin-top: 7px;
+
+  padding: 7px;
+
+  border: none;
+
+  border-radius: 6px;
+
+  background: #ec4899;
+
+  color: white;
+
+  cursor: pointer;
+
+  font-weight: 700;
+}
+
+.map-popup-risk {
+  display: inline-block;
+
+  padding: 3px 7px;
+
+  margin-bottom: 5px;
+
+  border-radius: 10px;
+
+  font-size: 9px;
+
+  font-weight: 900;
+}
+
+
+/* =========================================================
+   RISK COLOURS
+========================================================= */
+
+.risk-low {
+  color: #4ade80 !important;
+}
+
+.risk-medium {
+  color: #fde047 !important;
+}
+
+.risk-high {
+  color: #fb923c !important;
+}
+
+.risk-critical {
+  color: #f87171 !important;
+}
+
+
+/* =========================================================
+   RISK LEGEND
+========================================================= */
+
+.admin-risk-legend {
+  min-height: 42px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 16px;
+
+  color: #b8adb6;
+
+  font-size: 9px;
+}
+
+.admin-risk-legend span {
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+}
+
+.admin-risk-legend i {
+  width: 8px;
+
+  height: 8px;
+
+  display: inline-block;
+
+  border-radius: 50%;
+}
+
+.legend-low {
+  background: #22c55e;
+}
+
+.legend-medium {
+  background: #eab308;
+}
+
+.legend-high {
+  background: #f97316;
+}
+
+.legend-critical {
+  background: #ef4444;
+}
+
+
+/* =========================================================
+   LATEST ALERTS
+========================================================= */
+
+.active-alert-pill {
+  padding: 5px 8px;
+
+  border-radius: 14px;
+
+  background:
+    rgba(239, 68, 68, 0.13);
+
+  color: #fca5a5;
+
+  font-size: 8px;
+
+  font-weight: 900;
+}
+
+.admin-latest-alert-list {
+  max-height: 430px;
+
+  overflow-y: auto;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.admin-latest-alert {
+  width: 100%;
+
+  padding: 10px;
+
+  display: grid;
+
+  grid-template-columns:
+    35px 1fr auto;
+
+  gap: 9px;
+
+  text-align: left;
+
+  border:
+    1px solid rgba(236, 72, 153, 0.15);
+
+  border-left:
+    4px solid #ec4899;
+
+  border-radius: 9px;
+
+  background:
+    rgba(255, 255, 255, 0.04);
+
+  color: white;
+
+  cursor: pointer;
+}
+
+.admin-latest-alert.alert-is-active {
+  border-left-color: #ef4444;
+
+  background:
+    rgba(239, 68, 68, 0.065);
+}
+
+.latest-alert-symbol {
+  width: 33px;
+
+  height: 33px;
+
+  border-radius: 50%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background:
+    rgba(236, 72, 153, 0.13);
+}
+
+.admin-latest-alert strong {
+  display: block;
+
+  color: white;
+
+  font-size: 11px;
+}
+
+.admin-latest-alert span {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #cabec8;
+
+  font-size: 9px;
+}
+
+.admin-latest-alert small {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #918690;
+
+  font-size: 8px;
+}
+
+.latest-alert-status {
+  padding: 3px 6px;
+
+  height: fit-content;
+
+  border-radius: 10px;
+
+  font-size: 7px !important;
+
+  font-weight: 900;
+}
+
+.latest-alert-status.active {
+  background:
+    rgba(239, 68, 68, 0.15);
+
+  color: #fca5a5;
+}
+
+.latest-alert-status.resolved {
+  background:
+    rgba(34, 197, 94, 0.13);
+
+  color: #86efac;
+}
+
+.view-all-alerts-button {
+  width: 100%;
+
+  margin-top: 11px;
+
+  padding: 9px;
+
+  border:
+    1px solid rgba(236, 72, 153, 0.3);
+
+  border-radius: 7px;
+
+  background: transparent;
+
+  color: #f472b6;
+
+  cursor: pointer;
+
+  font-size: 10px;
+
+  font-weight: 800;
+}
+
+.admin-no-alerts {
+  padding: 30px;
+
+  text-align: center;
+
+  color: #9d939c;
+}
+
+
+/* =========================================================
+   INCIDENT PANEL
+========================================================= */
+
+.admin-incident-panel {
+  margin-top: 18px;
+
+  padding: 20px;
+
+  border-radius: 15px;
+
+  border:
+    1px solid rgba(236, 72, 153, 0.3);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.055),
+      rgba(236, 72, 153, 0.04)
+    );
+}
+
+.incident-panel-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  gap: 18px;
+
+  margin-bottom: 18px;
+}
+
+.incident-user-title {
+  margin-top: 9px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+}
+
+.incident-user-avatar {
+  width: 43px;
+
+  height: 43px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(236, 72, 153, 0.14);
+}
+
+.incident-user-title h2 {
+  margin: 0;
+
+  color: white;
+
+  font-size: 20px;
+}
+
+.incident-user-title > div span {
+  color: #9b9099;
+
+  font-size: 9px;
+}
+
+.incident-risk-badge {
+  padding: 5px 8px;
+
+  border:
+    1px solid currentColor;
+
+  border-radius: 11px;
+
+  font-size: 8px;
+
+  font-weight: 900;
+}
+
+.incident-live-badge {
+  padding: 6px 9px;
+
+  border-radius: 13px;
+
+  color: #86efac;
+
+  background:
+    rgba(34, 197, 94, 0.1);
+
+  border:
+    1px solid rgba(34, 197, 94, 0.3);
+
+  font-size: 9px;
+
+  font-weight: 900;
+}
+
+
+/* =========================================================
+   INCIDENT GRID
+========================================================= */
+
+.incident-content-grid {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr 0.65fr;
+
+  gap: 14px;
+}
+
+.incident-location-column,
+.incident-risk-summary,
+.incident-actions-column,
+.incident-trusted-contacts {
+  min-width: 0;
+
+  padding: 15px;
+
+  border-radius: 11px;
+
+  border:
+    1px solid rgba(236, 72, 153, 0.17);
+
+  background:
+    rgba(255, 255, 255, 0.035);
+}
+
+.incident-location-column h3,
+.incident-risk-summary h3,
+.incident-actions-column h3,
+.incident-trusted-contacts h3 {
+  margin: 0 0 12px;
+
+  color: #f9a8d4;
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   MINI LOCATION MAP
+========================================================= */
+
+.incident-mini-map {
+  height: 220px;
+
+  overflow: hidden;
+
+  border-radius: 9px;
+
+  border:
+    1px solid rgba(236, 72, 153, 0.18);
+}
+
+.incident-leaflet-map {
+  width: 100%;
+
+  height: 100%;
+}
+
+.incident-location-text {
+  margin-top: 10px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.incident-location-text strong {
+  color: #f9a8d4;
+
+  font-size: 11px;
+}
+
+.incident-location-text span {
+  color: white;
+
+  font-size: 10px;
+
+  word-break: break-word;
+}
+
+.incident-location-text small {
+  color: #958a94;
+
+  font-size: 8px;
+}
+
+
+/* =========================================================
+   RISK SUMMARY
+========================================================= */
+
+.risk-summary-row {
+  padding: 9px 0;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 15px;
+
+  border-bottom:
+    1px solid rgba(255, 255, 255, 0.07);
+}
+
+.risk-summary-row span {
+  color: #a99da7;
+
+  font-size: 10px;
+}
+
+.risk-summary-row strong {
+  color: white;
+
+  font-size: 11px;
+
+  text-align: right;
+}
+
+.risk-reason-box,
+.destination-box {
+  margin-top: 11px;
+
+  padding: 11px;
+
+  border-radius: 8px;
+
+  background:
+    rgba(236, 72, 153, 0.06);
+
+  border:
+    1px solid rgba(236, 72, 153, 0.13);
+}
+
+.risk-reason-box span,
+.destination-box span {
+  color: #f9a8d4;
+
+  font-size: 9px;
+
+  font-weight: 800;
+}
+
+.risk-reason-box p,
+.destination-box p {
+  margin: 5px 0 0;
+
+  color: #d4c9d2;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+.danger-value {
+  color: #f87171 !important;
+}
+
+.safe-value {
+  color: #4ade80 !important;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.incident-actions-column {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 9px;
+}
+
+.incident-actions-column button {
+  width: 100%;
+
+  padding: 10px;
+
+  border-radius: 7px;
+
+  border: none;
+
+  color: white;
+
+  cursor: pointer;
+
+  font-size: 10px;
+
+  font-weight: 800;
+}
+
+.incident-actions-column button small {
+  display: block;
+
+  margin-top: 2px;
+
+  font-size: 7px;
+
+  opacity: 0.8;
+}
+
+.incident-email-button {
+  background:
+    linear-gradient(
+      135deg,
+      #ec4899,
+      #be185d
+    );
+}
+
+.incident-call-button {
+  background: #52525b;
+
+  cursor: not-allowed !important;
+
+  opacity: 0.6;
+}
+
+.incident-location-button {
+  background: #7c3aed;
+}
+
+.incident-alert-button {
+  background: #d97706;
+}
+
+.incident-resolve-button {
+  background: #16a34a;
+}
+
+
+/* =========================================================
+   TRUSTED CONTACTS
+========================================================= */
+
+.incident-trusted-contacts {
+  grid-column: 1 / -1;
+}
+
+.trusted-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.trusted-heading > span {
+  min-width: 22px;
+
+  height: 22px;
+
+  padding: 0 6px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 12px;
+
+  background:
+    rgba(236, 72, 153, 0.13);
+
+  color: #f9a8d4;
+
+  font-size: 9px;
+}
+
+.trusted-contact-list {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 9px;
+}
+
+.trusted-contact-row {
+  padding: 10px;
+
+  display: grid;
+
+  grid-template-columns:
+    35px 1fr 35px;
+
+  gap: 8px;
+
+  align-items: center;
+
+  border-radius: 8px;
+
+  background:
+    rgba(255, 255, 255, 0.04);
+
+  border:
+    1px solid rgba(236, 72, 153, 0.13);
+}
+
+.trusted-contact-avatar {
+  width: 34px;
+
+  height: 34px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(236, 72, 153, 0.12);
+}
+
+.trusted-contact-row strong {
+  display: block;
+
+  color: white;
+
+  font-size: 10px;
+}
+
+.trusted-contact-row span,
+.trusted-contact-row small {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #a89ca6;
+
+  font-size: 8px;
+}
+
+.trusted-contact-row button {
+  width: 31px;
+
+  height: 31px;
+
+  border: none;
+
+  border-radius: 50%;
+
+  background: #52525b;
+
+  color: white;
+
+  opacity: 0.6;
+}
+
+.manage-trusted-button {
+  margin-top: 11px;
+
+  border: none;
+
+  background: transparent;
+
+  color: #f472b6;
+
+  cursor: pointer;
+
+  font-size: 9px;
+
+  font-weight: 800;
+}
+
+.no-trusted-contacts {
+  color: #938991;
+
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   RISK OVERVIEW
+========================================================= */
+
+.admin-risk-overview {
+  margin-top: 18px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
+  gap: 12px;
+}
+
+.admin-risk-overview > div {
+  padding: 14px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  border:
+    1px solid rgba(236, 72, 153, 0.18);
+
+  border-radius: 10px;
+
+  background:
+    rgba(255, 255, 255, 0.04);
+}
+
+.admin-risk-overview span {
+  color: #c4b9c2;
+
+  font-size: 10px;
+}
+
+.admin-risk-overview strong {
+  color: white;
+
+  font-size: 20px;
+}
+
+
+/* =========================================================
+   CRITICAL POPUP
+========================================================= */
+
+.critical-alert-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 5000;
+
+  padding: 20px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background:
+    rgba(0, 0, 0, 0.82);
+
+  backdrop-filter: blur(7px);
+}
+
+.critical-alert-popup {
+  width: 470px;
+
+  max-width: 100%;
+
+  padding: 28px;
+
+  text-align: center;
+
+  border-radius: 17px;
+
+  border:
+    1px solid rgba(239, 68, 68, 0.55);
+
+  border-top:
+    5px solid #ef4444;
+
+  background:
+    linear-gradient(
+      145deg,
+      #161016,
+      #260b19
+    );
+
+  box-shadow:
+    0 30px 80px
+    rgba(0, 0, 0, 0.6);
+}
+
+.critical-popup-icon {
+  width: 65px;
+
+  height: 65px;
+
+  margin: auto;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(239, 68, 68, 0.14);
+
+  font-size: 30px;
+}
+
+.critical-popup-label {
+  display: block;
+
+  margin-top: 14px;
+
+  color: #f87171;
+
+  font-size: 9px;
+
+  font-weight: 900;
+
+  letter-spacing: 2px;
+}
+
+.critical-alert-popup h2 {
+  margin: 7px 0;
+
+  color: white;
+}
+
+.critical-popup-user {
+  color: #f9a8d4;
+}
+
+.critical-popup-details {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 9px;
+
+  margin-top: 18px;
+
+  text-align: left;
+}
+
+.critical-popup-details > div {
+  padding: 11px;
+
+  border:
+    1px solid rgba(236, 72, 153, 0.14);
+
+  border-radius: 7px;
+
+  background:
+    rgba(255, 255, 255, 0.05);
+}
+
+.critical-popup-details span {
+  display: block;
+
+  color: #9d929c;
+
+  font-size: 8px;
+}
+
+.critical-popup-details strong {
+  display: block;
+
+  margin-top: 4px;
+
+  color: white;
+
+  font-size: 10px;
+}
+
+.critical-location {
+  grid-column: 1 / -1;
+}
+
+.critical-text {
+  color: #f87171 !important;
+}
+
+.critical-message {
+  max-height: 130px;
+
+  overflow-y: auto;
+
+  margin-top: 11px;
+
+  padding: 11px;
+
+  text-align: left;
+
+  border:
+    1px solid rgba(239, 68, 68, 0.3);
+
+  border-radius: 7px;
+
+  background:
+    rgba(239, 68, 68, 0.09);
+
+  color: #fecaca;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+.critical-popup-actions {
+  margin-top: 17px;
+
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 9px;
+}
+
+.critical-popup-actions button {
+  padding: 11px;
+
+  border-radius: 7px;
+
+  cursor: pointer;
+
+  font-weight: 800;
+}
+
+.acknowledge-button {
+  border:
+    1px solid rgba(255, 255, 255, 0.2);
+
+  background: transparent;
+
+  color: white;
+}
+
+.view-emergency-button {
+  border: none;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ef4444,
+      #be123c
+    );
+
+  color: white;
+}
+
+
+/* =========================================================
+   LEAFLET
+========================================================= */
+
+.leaflet-container {
+  font-family: inherit;
+}
+
+.leaflet-control-attribution {
+  font-size: 8px;
+}
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+@keyframes adminLivePulse {
+
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.35;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes adminMarkerPulse {
+
+  0% {
+    transform: scale(0.7);
+    opacity: 0.8;
+  }
+
+  70% {
+    transform: scale(1.45);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+.admin-sidebar-overlay {
+  display: none;
+}
+
+@media (max-width: 1200px) {
+
+  .admin-overview-grid {
+    grid-template-columns:
+      repeat(3, 1fr);
+  }
+
+  .admin-live-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .incident-content-grid {
+    grid-template-columns:
+      1fr 1fr;
+  }
+
+  .incident-actions-column {
+    grid-column: 1 / -1;
+  }
+
+  .trusted-contact-list {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 850px) {
+
+  .admin-sidebar {
+    transform:
+      translateX(-100%);
+
+    transition:
+      0.25s ease;
+  }
+
+  .admin-sidebar.admin-sidebar-open {
+    transform:
+      translateX(0);
+  }
+
+  .admin-sidebar-overlay {
+    display: block;
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 900;
+
     background:
-    radial-gradient(circle at top right,rgba(236,72,153,.25),transparent 35%),
-    linear-gradient(135deg,#080808,#151015,#2b0d19);
-    color:white;
+      rgba(0, 0, 0, 0.65);
+  }
+
+  .admin-main-area {
+    width: 100%;
+
+    margin-left: 0;
+  }
+
+  .admin-mobile-menu {
+    width: 39px;
+
+    height: 39px;
+
+    display: block;
+
+    border:
+      1px solid rgba(236, 72, 153, 0.3);
+
+    border-radius: 7px;
+
+    background:
+      rgba(236, 72, 153, 0.1);
+
+    color: #f472b6;
+
+    cursor: pointer;
+
+    font-size: 18px;
+  }
+
+  .admin-real-map {
+    height: 390px;
+  }
 }
 
-.admin-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:20px 7%;
-    border-bottom:1px solid rgba(236,72,153,.25);
+@media (max-width: 650px) {
+
+  .admin-topbar {
+    padding: 11px 14px;
+  }
+
+  .admin-topbar-left h1 {
+    font-size: 17px;
+  }
+
+  .admin-topbar-left p {
+    display: none;
+  }
+
+  .admin-profile > div:last-child {
+    display: none;
+  }
+
+  .admin-dashboard-content {
+    padding:
+      15px 12px 35px;
+  }
+
+  .admin-overview-grid {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .overview-card {
+    min-height: 95px;
+
+    padding: 12px;
+  }
+
+  .overview-icon {
+    width: 36px;
+
+    height: 36px;
+
+    font-size: 17px;
+  }
+
+  .overview-card strong {
+    font-size: 21px;
+  }
+
+  .admin-real-map {
+    height: 340px;
+  }
+
+  .incident-content-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .incident-actions-column,
+  .incident-trusted-contacts {
+    grid-column: auto;
+  }
+
+  .trusted-contact-list {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-risk-overview {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
 }
 
-.admin-header h2{
-    color:#ec4899;
-}
+@media (max-width: 430px) {
 
-.admin-header button{
-    margin-left:20px;
-    padding:10px 18px;
-    background:#ec4899;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-}
+  .admin-overview-grid {
+    grid-template-columns: 1fr;
+  }
 
-.admin-dashboard main{
-    width:90%;
-    max-width:1200px;
-    margin:auto;
-    padding:50px 0;
-}
+  .admin-real-map {
+    height: 300px;
+  }
 
-.stats-grid{
-    margin-top:40px;
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:20px;
-}
+  .incident-user-title {
+    align-items: flex-start;
 
-.stat-card{
-    padding:30px;
-    border-radius:18px;
-    background:rgba(255,255,255,.07);
-    border:1px solid rgba(236,72,153,.2);
-    text-align:center;
-}
+    flex-wrap: wrap;
+  }
 
-.stat-card h3{
-    color:#f9a8d4;
-}
+  .critical-popup-details,
+  .critical-popup-actions {
+    grid-template-columns: 1fr;
+  }
 
-.stat-card h2{
-    margin-top:15px;
-    font-size:40px;
-}
+  .critical-location {
+    grid-column: auto;
+  }
 
-.admin-actions{
-    margin-top:50px;
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:20px;
-}
-
-.admin-actions button{
-    padding:20px;
-    font-size:18px;
-    background:#ec4899;
-    color:white;
-    border:none;
-    border-radius:12px;
-    cursor:pointer;
-}
-
-.admin-actions button:hover{
-    background:#db2777;
-}
-
-@media(max-width:900px){
-
-.stats-grid{
-grid-template-columns:repeat(2,1fr);
-}
-
-.admin-actions{
-grid-template-columns:1fr;
-}
-
-}
-
-@media(max-width:600px){
-
-.stats-grid{
-grid-template-columns:1fr;
-}
-
-.admin-header{
-flex-direction:column;
-gap:20px;
-}
-
+  .admin-risk-overview {
+    grid-template-columns: 1fr;
+  }
 }

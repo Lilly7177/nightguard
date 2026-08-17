@@ -1,0 +1,364 @@
+.admin-journey-page {
+  min-height: 100vh;
+  padding: 32px;
+
+  color: white;
+
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(219, 39, 119, 0.15),
+      transparent 35%
+    ),
+    #0b080c;
+}
+
+
+.admin-journey-header {
+  max-width: 1350px;
+  margin: 0 auto 25px;
+
+  display: flex;
+  align-items: center;
+  gap: 22px;
+
+  padding: 24px;
+
+  background: #171218;
+
+  border: 1px solid #4b2138;
+  border-radius: 18px;
+}
+
+
+.admin-journey-header > div {
+  flex: 1;
+}
+
+
+.admin-journey-header button {
+  padding: 11px 17px;
+
+  border: 1px solid #d92d79;
+  border-radius: 9px;
+
+  background: transparent;
+  color: white;
+
+  cursor: pointer;
+  font-weight: 700;
+}
+
+
+.admin-journey-header h1 {
+  margin: 3px 0;
+}
+
+
+.admin-journey-header p {
+  margin-bottom: 0;
+  color: #aaa1ad;
+}
+
+
+.admin-journey-label {
+  margin: 0 0 5px !important;
+
+  color: #ff4d9d !important;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  letter-spacing: 1.7px;
+}
+
+
+.admin-journey-live {
+  padding: 9px 14px;
+
+  color: #4ade80;
+
+  background: #062b18;
+
+  border: 1px solid #166534;
+  border-radius: 20px;
+
+  font-weight: 800;
+}
+
+
+.admin-journey-ended {
+  padding: 9px 14px;
+
+  color: #d1d5db;
+
+  background: #27272a;
+
+  border-radius: 20px;
+
+  font-weight: 800;
+}
+
+
+.admin-journey-content {
+  max-width: 1350px;
+  margin: auto;
+}
+
+
+.admin-journey-user-card {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+
+  margin-bottom: 20px;
+  padding: 22px;
+
+  background: #171218;
+
+  border: 1px solid #402033;
+  border-radius: 16px;
+}
+
+
+.admin-journey-avatar {
+  width: 58px;
+  height: 58px;
+
+  display: grid;
+  place-items: center;
+
+  background: #3b1830;
+
+  border-radius: 50%;
+
+  font-size: 26px;
+}
+
+
+.admin-journey-user-card h2 {
+  margin: 0 0 7px;
+}
+
+
+.admin-journey-user-card p {
+  margin: 3px 0;
+  color: #aaa1ad;
+}
+
+
+.admin-journey-stats {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 15px;
+
+  margin-bottom: 20px;
+}
+
+
+.admin-journey-stats > div,
+.admin-coordinate-grid > div {
+  padding: 18px;
+
+  background: #171218;
+
+  border: 1px solid #402033;
+  border-radius: 13px;
+}
+
+
+.admin-journey-stats span,
+.admin-coordinate-grid span {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #aaa1ad;
+
+  font-size: 12px;
+}
+
+
+.admin-journey-stats strong,
+.admin-coordinate-grid strong {
+  overflow-wrap: anywhere;
+}
+
+
+.admin-location-card,
+.admin-risk-card {
+  margin-bottom: 20px;
+  padding: 24px;
+
+  background: #171218;
+
+  border: 1px solid #402033;
+  border-radius: 18px;
+}
+
+
+.admin-location-title {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 15px;
+
+  margin-bottom: 20px;
+}
+
+
+.admin-location-title h2 {
+  margin: 0;
+}
+
+
+.admin-location-updating {
+  color: #4ade80;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+
+.admin-coordinate-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 15px;
+
+  margin-bottom: 18px;
+}
+
+
+.admin-map-frame {
+  height: 430px;
+
+  overflow: hidden;
+
+  border: 1px solid #4b2138;
+  border-radius: 16px;
+
+  background: #211921;
+}
+
+
+.admin-open-map-btn {
+  display: block;
+
+  width: fit-content;
+
+  margin: 20px auto 0;
+
+  padding: 13px 22px;
+
+  background: linear-gradient(
+    90deg,
+    #d92d79,
+    #ec4899
+  );
+
+  border-radius: 10px;
+
+  color: white;
+  text-decoration: none;
+
+  font-weight: 800;
+}
+
+
+.admin-no-location {
+  padding: 60px 20px;
+
+  text-align: center;
+
+  color: #aaa1ad;
+}
+
+
+.admin-no-location > div {
+  margin-bottom: 10px;
+
+  font-size: 50px;
+}
+
+
+.admin-no-location h3 {
+  color: white;
+}
+
+
+.admin-risk-card p {
+  color: #c7bdc9;
+}
+
+
+.admin-journey-message {
+  max-width: 700px;
+
+  margin: 100px auto;
+
+  padding: 50px;
+
+  text-align: center;
+
+  background: #171218;
+
+  border: 1px solid #402033;
+  border-radius: 18px;
+}
+
+
+.admin-journey-message p {
+  color: #aaa1ad;
+}
+
+
+.admin-journey-message button {
+  margin-top: 15px;
+  padding: 11px 18px;
+
+  border: none;
+  border-radius: 9px;
+
+  background: #d92d79;
+  color: white;
+
+  cursor: pointer;
+}
+
+
+@media (max-width: 800px) {
+
+  .admin-journey-page {
+    padding: 15px;
+  }
+
+
+  .admin-journey-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+
+  .admin-journey-stats {
+    grid-template-columns: 1fr;
+  }
+
+
+  .admin-coordinate-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  .admin-map-frame {
+    height: 330px;
+  }
+
+}

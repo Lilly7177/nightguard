@@ -1,0 +1,507 @@
+* {
+  box-sizing: border-box;
+}
+
+
+.shared-admin-layout {
+  min-height: 100vh;
+
+  display: flex;
+
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(236, 72, 153, 0.12),
+      transparent 32%
+    ),
+    #080608;
+
+  color: #ffffff;
+}
+
+
+/* =========================================
+   SIDEBAR
+========================================= */
+
+.shared-admin-sidebar {
+  position: fixed;
+
+  left: 0;
+  top: 0;
+
+  width: 235px;
+  height: 100vh;
+
+  display: flex;
+
+  flex-direction: column;
+
+  padding: 23px 15px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #090709,
+      #100910
+    );
+
+  border-right:
+    1px solid
+    rgba(236, 72, 153, 0.2);
+
+  z-index: 100;
+}
+
+
+.shared-admin-brand {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding:
+    0 9px
+    25px;
+}
+
+
+.shared-admin-brand-icon {
+  width: 43px;
+  height: 43px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background:
+    rgba(236, 72, 153, 0.13);
+
+  font-size: 22px;
+}
+
+
+.shared-admin-brand h2 {
+  margin: 0;
+
+  color: #ec4899;
+
+  font-size: 19px;
+}
+
+
+.shared-admin-brand span {
+  color: #737373;
+
+  font-size: 9px;
+
+  letter-spacing: 2px;
+}
+
+
+/* =========================================
+   NAVIGATION
+========================================= */
+
+.shared-admin-nav {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+
+  flex: 1;
+}
+
+
+.shared-admin-link {
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding:
+    12px
+    14px;
+
+  border-radius: 9px;
+
+  color: #b7b0b7;
+
+  text-decoration: none;
+
+  font-size: 14px;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.shared-admin-link span {
+  width: 22px;
+
+  text-align: center;
+
+  font-size: 16px;
+}
+
+
+.shared-admin-link:hover {
+  color: #ffffff;
+
+  background:
+    rgba(236, 72, 153, 0.11);
+
+  transform:
+    translateX(2px);
+}
+
+
+.shared-admin-link.active {
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ec4899,
+      #be185d
+    );
+
+  box-shadow:
+    0 8px 18px
+    rgba(190, 24, 93, 0.22);
+}
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+.shared-admin-logout {
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding:
+    12px
+    14px;
+
+  margin-top: 15px;
+
+  border: none;
+
+  border-radius: 9px;
+
+  background:
+    rgba(239, 68, 68, 0.08);
+
+  color: #f87171;
+
+  cursor: pointer;
+
+  font-size: 14px;
+}
+
+
+.shared-admin-logout:hover {
+  background:
+    rgba(239, 68, 68, 0.17);
+}
+
+
+/* =========================================
+   RIGHT SIDE
+========================================= */
+
+.shared-admin-right {
+  margin-left: 235px;
+
+  width:
+    calc(
+      100% - 235px
+    );
+
+  min-height: 100vh;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.shared-admin-header {
+  min-height: 83px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content:
+    space-between;
+
+  gap: 25px;
+
+  padding:
+    16px
+    32px;
+
+  position: sticky;
+
+  top: 0;
+
+  z-index: 90;
+
+  background:
+    rgba(
+      9,
+      7,
+      9,
+      0.94
+    );
+
+  backdrop-filter:
+    blur(15px);
+
+  border-bottom:
+    1px solid
+    rgba(236, 72, 153, 0.14);
+}
+
+
+.shared-admin-header-label {
+  margin:
+    0 0 4px;
+
+  color: #ec4899;
+
+  font-size: 9px;
+
+  font-weight: 800;
+
+  letter-spacing: 2px;
+}
+
+
+.shared-admin-header h2 {
+  margin: 0;
+
+  font-size: 18px;
+
+  color: #f4f4f5;
+}
+
+
+.shared-admin-header-right {
+  display: flex;
+
+  align-items: center;
+
+  gap: 22px;
+}
+
+
+.shared-admin-system-status {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  color: #86efac;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+
+.shared-admin-system-status span {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+
+  background: #22c55e;
+
+  box-shadow:
+    0 0 10px
+    rgba(34, 197, 94, 0.6);
+}
+
+
+.shared-admin-profile {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+
+.shared-admin-avatar {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ec4899,
+      #be185d
+    );
+
+  font-weight: 800;
+}
+
+
+.shared-admin-profile strong {
+  display: block;
+
+  font-size: 12px;
+}
+
+
+.shared-admin-profile small {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #818181;
+
+  font-size: 10px;
+}
+
+
+/* =========================================
+   CONTENT
+========================================= */
+
+.shared-admin-content {
+  width: 100%;
+
+  min-height:
+    calc(
+      100vh - 83px
+    );
+
+  padding:
+    30px
+    34px
+    50px;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (
+  max-width: 900px
+) {
+
+  .shared-admin-sidebar {
+    width: 75px;
+
+    padding:
+      20px
+      10px;
+  }
+
+
+  .shared-admin-brand {
+    justify-content: center;
+
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+
+  .shared-admin-brand > div:last-child {
+    display: none;
+  }
+
+
+  .shared-admin-link {
+    justify-content: center;
+
+    padding:
+      13px
+      8px;
+
+    font-size: 0;
+  }
+
+
+  .shared-admin-link span {
+    font-size: 19px;
+  }
+
+
+  .shared-admin-logout {
+    justify-content: center;
+
+    font-size: 0;
+  }
+
+
+  .shared-admin-logout span {
+    font-size: 19px;
+  }
+
+
+  .shared-admin-right {
+    margin-left: 75px;
+
+    width:
+      calc(
+        100% - 75px
+      );
+  }
+
+}
+
+
+@media (
+  max-width: 600px
+) {
+
+  .shared-admin-header {
+    padding:
+      14px
+      18px;
+  }
+
+
+  .shared-admin-system-status,
+  .shared-admin-profile > div:last-child {
+    display: none;
+  }
+
+
+  .shared-admin-content {
+    padding:
+      20px
+      15px
+      40px;
+  }
+
+}

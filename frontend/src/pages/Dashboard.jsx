@@ -4,6 +4,7 @@ import {
 } from "react";
 
 import {
+  useLocation,
   useNavigate
 } from "react-router-dom";
 
@@ -12,8 +13,11 @@ import axios from "axios";
 import "../styles/Dashboard.css";
 import API_BASE_URL from "../api";
 
+
 function Dashboard() {
   const navigate = useNavigate();
+  const location = useLocation();
+
 
   let user = null;
 
@@ -24,6 +28,7 @@ function Dashboard() {
     user = savedUser
       ? JSON.parse(savedUser)
       : null;
+
   } catch (error) {
     console.error(
       "Unable to read user data:",
@@ -40,11 +45,59 @@ function Dashboard() {
       cancelled_journeys: 0
     });
 
+
   const [
     loadingStatistics,
     setLoadingStatistics
   ] = useState(true);
 
+
+  const [
+    loginToast,
+    setLoginToast
+  ] = useState(
+    location.state?.loginSuccess
+      ? (
+          location.state?.loginMessage ||
+          "Login successful"
+        )
+      : ""
+  );
+
+
+  // =====================================================
+  // LOGIN SUCCESS TOAST
+  // =====================================================
+
+  useEffect(() => {
+    if (!loginToast) {
+      return;
+    }
+
+    const timer =
+      window.setTimeout(() => {
+        setLoginToast("");
+      }, 3000);
+
+    /*
+      Remove login state from browser history
+      so refreshing the dashboard does not
+      show the toast again.
+    */
+    window.history.replaceState(
+      {},
+      document.title
+    );
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [loginToast]);
+
+
+  // =====================================================
+  // LOAD USER STATISTICS
+  // =====================================================
 
   useEffect(() => {
     if (!user?.id) {
@@ -55,40 +108,62 @@ function Dashboard() {
       return;
     }
 
+
     const loadStatistics = async () => {
       try {
         setLoadingStatistics(true);
 
-        const response = await axios.get(
-          `${API_BASE_URL}/monitoring/user/${user.id}/statistics`
-        );
+        const response =
+          await axios.get(
+            `${API_BASE_URL}/monitoring/user/${user.id}/statistics`
+          );
+
 
         setStatistics({
           total_journeys:
-            response.data.total_journeys ?? 0,
+            response.data.total_journeys ??
+            0,
 
           safe_journeys:
-            response.data.safe_journeys ?? 0,
+            response.data.safe_journeys ??
+            0,
 
           sos_activated:
-            response.data.sos_activated ?? 0,
+            response.data.sos_activated ??
+            0,
 
           cancelled_journeys:
-            response.data.cancelled_journeys ?? 0
+            response.data.cancelled_journeys ??
+            0
         });
+
+
       } catch (error) {
+
         console.error(
           "Unable to load journey statistics:",
           error
         );
+
+
       } finally {
+
         setLoadingStatistics(false);
       }
     };
 
-    loadStatistics();
-  }, [navigate, user?.id]);
 
+    loadStatistics();
+
+  }, [
+    navigate,
+    user?.id
+  ]);
+
+
+  // =====================================================
+  // LOGOUT
+  // =====================================================
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -102,7 +177,45 @@ function Dashboard() {
   return (
     <div className="dashboard-page">
 
+
+      {/* ===============================================
+          LOGIN SUCCESS TOAST
+      =============================================== */}
+
+      {loginToast && (
+
+        <div
+          style={{
+            position: "fixed",
+            top: "22px",
+            right: "22px",
+            zIndex: 9999,
+            minWidth: "240px",
+            maxWidth: "340px",
+            padding: "14px 18px",
+            borderRadius: "12px",
+            background:
+              "linear-gradient(135deg, #ec4899, #be185d)",
+            color: "#ffffff",
+            boxShadow:
+              "0 12px 30px rgba(0,0,0,0.35)",
+            border:
+              "1px solid rgba(255,255,255,0.15)",
+            fontWeight: "700"
+          }}
+        >
+          ✅ {loginToast}
+        </div>
+
+      )}
+
+
+      {/* ===============================================
+          HEADER
+      =============================================== */}
+
       <header className="dashboard-header">
+
 
         <div
           className="dashboard-logo"
@@ -116,9 +229,11 @@ function Dashboard() {
 
         <div className="dashboard-user">
 
+
           <span>
             {user?.full_name || "User"}
           </span>
+
 
           <button
             type="button"
@@ -128,25 +243,40 @@ function Dashboard() {
             Logout
           </button>
 
+
         </div>
+
 
       </header>
 
 
+      {/* ===============================================
+          MAIN CONTENT
+      =============================================== */}
+
       <main className="dashboard-content">
+
+
+        {/* =============================================
+            WELCOME
+        ============================================= */}
 
         <section className="welcome-section">
 
+
           <div>
+
 
             <p className="welcome-label">
               USER DASHBOARD
             </p>
 
+
             <h1>
               Welcome back,{" "}
               {user?.full_name || "User"} 👋
             </h1>
+
 
             <p>
               Manage your safety tools, trusted
@@ -154,98 +284,154 @@ function Dashboard() {
               one secure place.
             </p>
 
+
           </div>
 
 
           <div className="status-badge">
+
             <span className="status-dot"></span>
+
             System Active
+
           </div>
+
 
         </section>
 
 
+        {/* =============================================
+            STATISTICS
+        ============================================= */}
+
         <section className="dashboard-statistics">
 
+
           <div className="dashboard-stat-card">
+
 
             <span className="stat-icon">
               🚶
             </span>
 
+
             <div>
-              <p>Total Journeys</p>
+
+              <p>
+                Total Journeys
+              </p>
+
 
               <strong>
+
                 {loadingStatistics
                   ? "..."
                   : statistics.total_journeys}
+
               </strong>
+
             </div>
+
 
           </div>
 
 
           <div className="dashboard-stat-card safe-stat-card">
 
+
             <span className="stat-icon">
               🛡️
             </span>
 
+
             <div>
-              <p>Safe Journeys</p>
+
+              <p>
+                Safe Journeys
+              </p>
+
 
               <strong>
+
                 {loadingStatistics
                   ? "..."
                   : statistics.safe_journeys}
+
               </strong>
+
             </div>
+
 
           </div>
 
 
           <div className="dashboard-stat-card sos-stat-card">
 
+
             <span className="stat-icon">
               🚨
             </span>
 
+
             <div>
-              <p>SOS Activated</p>
+
+              <p>
+                SOS Activated
+              </p>
+
 
               <strong>
+
                 {loadingStatistics
                   ? "..."
                   : statistics.sos_activated}
+
               </strong>
+
             </div>
+
 
           </div>
 
 
           <div className="dashboard-stat-card cancelled-stat-card">
 
+
             <span className="stat-icon">
               ❌
             </span>
 
+
             <div>
-              <p>Cancelled Journeys</p>
+
+              <p>
+                Cancelled Journeys
+              </p>
+
 
               <strong>
+
                 {loadingStatistics
                   ? "..."
                   : statistics.cancelled_journeys}
+
               </strong>
+
             </div>
 
+
           </div>
+
 
         </section>
 
 
+        {/* =============================================
+            PROFILE
+        ============================================= */}
+
         <section className="profile-card">
+
 
           <div className="profile-icon">
             👤
@@ -254,9 +440,11 @@ function Dashboard() {
 
           <div className="profile-details">
 
+
             <h2>
               Your Profile
             </h2>
+
 
             <p>
               <strong>Name:</strong>{" "}
@@ -264,11 +452,13 @@ function Dashboard() {
                 "Not available"}
             </p>
 
+
             <p>
               <strong>Email:</strong>{" "}
               {user?.email ||
                 "Not available"}
             </p>
+
 
             <p>
               <strong>Phone:</strong>{" "}
@@ -276,12 +466,19 @@ function Dashboard() {
                 "Not available"}
             </p>
 
+
           </div>
+
 
         </section>
 
 
+        {/* =============================================
+            FEATURE GRID
+        ============================================= */}
+
         <section className="dashboard-grid">
+
 
           <button
             type="button"
@@ -291,24 +488,33 @@ function Dashboard() {
             }
           >
 
+
             <span className="feature-icon">
               👥
             </span>
 
+
             <div>
+
+
               <h3>
                 Trusted Contacts
               </h3>
+
 
               <p>
                 Add and manage your emergency
                 contacts.
               </p>
+
+
             </div>
+
 
             <span className="feature-arrow">
               →
             </span>
+
 
           </button>
 
@@ -321,24 +527,33 @@ function Dashboard() {
             }
           >
 
+
             <span className="feature-icon">
               🚨
             </span>
 
+
             <div>
+
+
               <h3>
                 Emergency Alert
               </h3>
+
 
               <p>
                 Send an emergency SOS alert
                 instantly.
               </p>
+
+
             </div>
+
 
             <span className="feature-arrow">
               →
             </span>
+
 
           </button>
 
@@ -351,24 +566,33 @@ function Dashboard() {
             }
           >
 
+
             <span className="feature-icon">
               📜
             </span>
 
+
             <div>
+
+
               <h3>
                 Alert History
               </h3>
+
 
               <p>
                 View previous emergency alert
                 records.
               </p>
+
+
             </div>
+
 
             <span className="feature-arrow">
               →
             </span>
+
 
           </button>
 
@@ -381,31 +605,46 @@ function Dashboard() {
             }
           >
 
+
             <span className="feature-icon">
               ⚙️
             </span>
 
+
             <div>
+
+
               <h3>
                 Settings
               </h3>
+
 
               <p>
                 Manage your profile and account
                 preferences.
               </p>
+
+
             </div>
+
 
             <span className="feature-arrow">
               →
             </span>
 
+
           </button>
+
 
         </section>
 
 
+        {/* =============================================
+            NIGHT MONITORING
+        ============================================= */}
+
         <section className="monitoring-section">
+
 
           <button
             type="button"
@@ -415,7 +654,9 @@ function Dashboard() {
             }
           >
 
+
             <div className="monitoring-main-content">
+
 
               <div className="monitoring-main-icon">
                 🌙
@@ -424,13 +665,16 @@ function Dashboard() {
 
               <div className="monitoring-main-text">
 
+
                 <p className="monitoring-main-label">
                   MAIN SAFETY FEATURE
                 </p>
 
+
                 <h2>
                   Start Night Monitoring
                 </h2>
+
 
                 <p>
                   Begin your journey with live GPS
@@ -438,23 +682,32 @@ function Dashboard() {
                   automatic emergency protection.
                 </p>
 
+
               </div>
+
 
             </div>
 
 
             <div className="monitoring-main-action">
+
               ▶ Start Monitoring
+
             </div>
+
 
           </button>
 
+
         </section>
 
+
       </main>
+
 
     </div>
   );
 }
+
 
 export default Dashboard;

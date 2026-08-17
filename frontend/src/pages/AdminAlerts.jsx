@@ -12,21 +12,29 @@ function AdminAlerts() {
   const [error, setError] = useState("");
   const [updatingId, setUpdatingId] = useState(null);
 
+  // =====================================
+  // Load Emergency Alerts
+  // =====================================
+
   const loadAlerts = async () => {
     try {
       setLoading(true);
       setError("");
 
-  
+      const response = await axios.get(
+        `${API_BASE_URL}/admin/alerts`
+      );
 
       setAlerts(response.data.alerts || []);
+
     } catch (error) {
-      console.error(error);
+      console.error("Unable to load alerts:", error);
 
       setError(
         error.response?.data?.detail ||
         "Unable to load emergency alerts."
       );
+
     } finally {
       setLoading(false);
     }
@@ -35,6 +43,10 @@ function AdminAlerts() {
   useEffect(() => {
     loadAlerts();
   }, []);
+
+  // =====================================
+  // Update Alert Status
+  // =====================================
 
   const updateAlertStatus = async (alertId, newStatus) => {
     try {
@@ -51,26 +63,32 @@ function AdminAlerts() {
       );
 
       setAlerts((currentAlerts) =>
-        currentAlerts.map((alert) =>
-          alert.id === alertId
+        currentAlerts.map((alertItem) =>
+          alertItem.id === alertId
             ? {
-                ...alert,
+                ...alertItem,
                 status: newStatus
               }
-            : alert
+            : alertItem
         )
       );
-    } catch (error) {
-      console.error(error);
 
-      alert(
+    } catch (error) {
+      console.error("Unable to update alert:", error);
+
+      window.alert(
         error.response?.data?.detail ||
         "Unable to update alert status."
       );
+
     } finally {
       setUpdatingId(null);
     }
   };
+
+  // =====================================
+  // Format Date
+  // =====================================
 
   const formatDate = (dateValue) => {
     if (!dateValue) {
@@ -79,6 +97,24 @@ function AdminAlerts() {
 
     return new Date(dateValue).toLocaleString();
   };
+
+  // =====================================
+  // Alert Counts
+  // =====================================
+
+  const activeAlerts = alerts.filter(
+    (alertItem) =>
+      alertItem.status?.toLowerCase() === "active"
+  ).length;
+
+  const resolvedAlerts = alerts.filter(
+    (alertItem) =>
+      alertItem.status?.toLowerCase() === "resolved"
+  ).length;
+
+  // =====================================
+  // Page
+  // =====================================
 
   return (
     <div className="admin-alerts-page">
@@ -113,6 +149,10 @@ function AdminAlerts() {
 
         </section>
 
+        {/* ============================= */}
+        {/* Summary */}
+        {/* ============================= */}
+
         <section className="admin-alerts-summary">
 
           <div className="admin-alert-summary-card">
@@ -122,29 +162,19 @@ function AdminAlerts() {
 
           <div className="admin-alert-summary-card">
             <span>Active</span>
-            <strong>
-              {
-                alerts.filter(
-                  (alert) =>
-                    alert.status?.toLowerCase() === "active"
-                ).length
-              }
-            </strong>
+            <strong>{activeAlerts}</strong>
           </div>
 
           <div className="admin-alert-summary-card">
             <span>Resolved</span>
-            <strong>
-              {
-                alerts.filter(
-                  (alert) =>
-                    alert.status?.toLowerCase() === "resolved"
-                ).length
-              }
-            </strong>
+            <strong>{resolvedAlerts}</strong>
           </div>
 
         </section>
+
+        {/* ============================= */}
+        {/* Loading */}
+        {/* ============================= */}
 
         {loading && (
           <div className="admin-alerts-message">
@@ -152,131 +182,198 @@ function AdminAlerts() {
           </div>
         )}
 
+        {/* ============================= */}
+        {/* Error */}
+        {/* ============================= */}
+
         {!loading && error && (
           <div className="admin-alerts-message admin-alerts-error">
-            {error}
+
+            <p>{error}</p>
+
+            <button
+              type="button"
+              onClick={loadAlerts}
+            >
+              Try Again
+            </button>
+
           </div>
         )}
+
+        {/* ============================= */}
+        {/* No Alerts */}
+        {/* ============================= */}
 
         {!loading && !error && alerts.length === 0 && (
           <div className="admin-alerts-empty">
+
             <h2>No emergency alerts found</h2>
-            <p>New SOS alerts will appear here.</p>
+
+            <p>
+              New SOS and automatic emergency alerts will appear here.
+            </p>
+
           </div>
         )}
 
+        {/* ============================= */}
+        {/* Alert List */}
+        {/* ============================= */}
+
         {!loading && !error && alerts.length > 0 && (
+
           <section className="admin-alerts-list">
 
-            {alerts.map((alert) => (
+            {alerts.map((alertItem) => (
+
               <article
                 className="admin-alert-card"
-                key={alert.id}
+                key={alertItem.id}
               >
+
+                {/* Alert Header */}
 
                 <div className="admin-alert-card-header">
 
                   <div>
+
                     <span className="admin-alert-id">
-                      ALERT #{alert.id}
+                      ALERT #{alertItem.id}
                     </span>
 
                     <h2>
-                      🚨 {alert.alert_type || "Emergency"}
+                      🚨 {alertItem.alert_type || "Emergency"}
                     </h2>
+
                   </div>
 
                   <span
                     className={`admin-alert-status ${
-                      alert.status?.toLowerCase() === "active"
+                      alertItem.status?.toLowerCase() === "active"
                         ? "admin-status-active"
-                        : alert.status?.toLowerCase() === "resolved"
+                        : alertItem.status?.toLowerCase() === "resolved"
                         ? "admin-status-resolved"
                         : "admin-status-cancelled"
                     }`}
                   >
-                    {alert.status}
+                    {alertItem.status || "Unknown"}
                   </span>
 
                 </div>
+
+                {/* Alert Details */}
 
                 <div className="admin-alert-details-grid">
 
                   <div>
                     <span>User</span>
-                    <p>{alert.full_name}</p>
+
+                    <p>
+                      {alertItem.full_name || "Not available"}
+                    </p>
                   </div>
 
                   <div>
                     <span>Phone Number</span>
-                    <p>{alert.phone_number || "Not available"}</p>
+
+                    <p>
+                      {alertItem.phone_number || "Not available"}
+                    </p>
                   </div>
 
                   <div>
                     <span>Location</span>
-                    <p>{alert.location || "Not available"}</p>
+
+                    <p>
+                      {alertItem.location || "Not available"}
+                    </p>
                   </div>
 
                   <div>
                     <span>Date and Time</span>
-                    <p>{formatDate(alert.created_at)}</p>
+
+                    <p>
+                      {formatDate(alertItem.created_at)}
+                    </p>
                   </div>
 
                 </div>
 
+                {/* Emergency Message */}
+
                 <div className="admin-alert-message-box">
+
                   <span>Emergency Message</span>
-                  <p>{alert.message || "No message provided"}</p>
+
+                  <p>
+                    {alertItem.message || "No message provided"}
+                  </p>
+
                 </div>
+
+                {/* Actions */}
 
                 <div className="admin-alert-actions">
 
-                  {alert.status?.toLowerCase() !== "resolved" && (
+                  {alertItem.status?.toLowerCase() !== "resolved" && (
+
                     <button
                       type="button"
                       className="resolve-alert-btn"
-                      disabled={updatingId === alert.id}
+                      disabled={updatingId === alertItem.id}
                       onClick={() =>
                         updateAlertStatus(
-                          alert.id,
+                          alertItem.id,
                           "Resolved"
                         )
                       }
                     >
-                      {updatingId === alert.id
+
+                      {updatingId === alertItem.id
                         ? "Updating..."
                         : "✅ Mark Resolved"}
+
                     </button>
+
                   )}
 
-                  {alert.status?.toLowerCase() !== "cancelled" && (
+                  {alertItem.status?.toLowerCase() !== "cancelled" && (
+
                     <button
                       type="button"
                       className="cancel-alert-btn"
-                      disabled={updatingId === alert.id}
+                      disabled={updatingId === alertItem.id}
                       onClick={() =>
                         updateAlertStatus(
-                          alert.id,
+                          alertItem.id,
                           "Cancelled"
                         )
                       }
                     >
-                      Cancel Alert
+                      {updatingId === alertItem.id
+                        ? "Updating..."
+                        : "Cancel Alert"}
                     </button>
+
                   )}
 
-                  {alert.status?.toLowerCase() === "resolved" && (
+                  {alertItem.status?.toLowerCase() === "resolved" && (
+
                     <span className="resolved-label">
-                      Alert successfully resolved
+                      ✅ Alert successfully resolved
                     </span>
+
                   )}
 
                 </div>
 
               </article>
+
             ))}
 
           </section>
+
         )}
 
       </main>
