@@ -143,11 +143,12 @@ function formatSpeed(
 
 
 /*
- * About 50 metres.
- * 1 mile = approximately 1609 metres.
+ * Arrival is offered once the user has completed at least
+ * 96% of the planned walking route. A ~50 metre proximity
+ * fallback is retained for very short journeys / route noise.
  */
-const ARRIVAL_THRESHOLD_MILES =
-  0.031;
+const ARRIVAL_PROGRESS_THRESHOLD = 0.96;
+const ARRIVAL_THRESHOLD_MILES = 0.031;
 
 
 /*
@@ -323,14 +324,30 @@ function LiveJourney() {
     WARMUP_SECONDS;
 
 
+  const journeyProgress =
+    totalDistance > 0 &&
+    Number.isFinite(totalDistance) &&
+    Number.isFinite(remainingDistance)
+      ? Math.max(
+          0,
+          Math.min(
+            1,
+            (totalDistance - remainingDistance) /
+              totalDistance
+          )
+        )
+      : 0;
+
+
   const hasReachedDestination =
     journeyStarted &&
-    Number.isFinite(
-      remainingDistance
-    ) &&
     totalDistance > 0 &&
-    remainingDistance <=
-      ARRIVAL_THRESHOLD_MILES;
+    (
+      journeyProgress >=
+        ARRIVAL_PROGRESS_THRESHOLD ||
+      remainingDistance <=
+        ARRIVAL_THRESHOLD_MILES
+    );
 
 
   const watchIdRef =
@@ -361,6 +378,38 @@ function LiveJourney() {
 
   const pageActiveRef =
     useRef(true);
+
+
+  /*
+   * Values used by the long-lived GPS watcher.
+   * Keeping these in refs prevents watchPosition()
+   * from being destroyed/recreated whenever UI state changes.
+   */
+  const offRouteRef = useRef(false);
+  const showSOSRef = useRef(false);
+  const lastSafetyConfirmationRef = useRef(0);
+  const warmupActiveRef = useRef(true);
+
+
+  useEffect(() => {
+    offRouteRef.current = offRoute;
+  }, [offRoute]);
+
+
+  useEffect(() => {
+    showSOSRef.current = showSOS;
+  }, [showSOS]);
+
+
+  useEffect(() => {
+    lastSafetyConfirmationRef.current =
+      lastSafetyConfirmation;
+  }, [lastSafetyConfirmation]);
+
+
+  useEffect(() => {
+    warmupActiveRef.current = warmupActive;
+  }, [warmupActive]);
 
 
   const showMessage = (
@@ -492,7 +541,7 @@ function LiveJourney() {
                 stationarySeconds,
 
               off_route:
-                offRoute
+                offRouteRef.current
             }
           );
 
@@ -886,17 +935,19 @@ function LiveJourney() {
              */
             const cooldownFinished =
               Date.now() -
-                lastSafetyConfirmation >
+                lastSafetyConfirmationRef.current >
               5 * 60 * 1000;
 
 
             if (
-              !warmupActive &&
+              !warmupActiveRef.current &&
               stationarySeconds >=
                 120 &&
-              !showSOS &&
+              !showSOSRef.current &&
               cooldownFinished
             ) {
+              showSOSRef.current = true;
+
               setShowSOS(
                 true
               );
@@ -1001,11 +1052,7 @@ function LiveJourney() {
     };
 
   }, [
-    sessionId,
-    offRoute,
-    showSOS,
-    lastSafetyConfirmation,
-    warmupActive
+    sessionId
   ]);
 
 
@@ -1022,7 +1069,7 @@ function LiveJourney() {
 
 
     showMessage(
-      "You are within about 50 metres of your destination. Confirm when you have arrived safely.",
+      "You have completed at least 96% of your route or are very close to your destination. Confirm when you have arrived safely.",
       "success"
     );
 
@@ -1268,6 +1315,8 @@ function LiveJourney() {
 
   const openEmergency =
     () => {
+      showSOSRef.current = false;
+
       setShowSOS(
         false
       );
@@ -1318,6 +1367,8 @@ function LiveJourney() {
 
   const triggerAutomaticEmergency =
     () => {
+      showSOSRef.current = false;
+
       setShowSOS(
         false
       );
@@ -1374,13 +1425,20 @@ function LiveJourney() {
 
   const confirmSafe =
     () => {
+      showSOSRef.current = false;
+
       setShowSOS(
         false
       );
 
 
+      const confirmedAt = Date.now();
+
+      lastSafetyConfirmationRef.current =
+        confirmedAt;
+
       setLastSafetyConfirmation(
-        Date.now()
+        confirmedAt
       );
 
 
@@ -1765,6 +1823,10 @@ function LiveJourney() {
                 destination. Confirm that
                 you arrived safely.
               </p>
+
+              <small className="journey-arrival-progress">
+                Route progress: {Math.round(journeyProgress * 100)}%
+              </small>
             </div>
 
           </section>

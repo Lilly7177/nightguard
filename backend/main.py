@@ -6,6 +6,8 @@ from contacts import router as contact_router
 from alerts import router as alerts_router
 from admin import router as admin_router
 from monitoring import router as monitoring_router
+from routing import router as routing_router
+
 
 app = FastAPI(
     title="NightGuard API",
@@ -33,6 +35,8 @@ app.include_router(contact_router)
 app.include_router(alerts_router)
 app.include_router(admin_router)
 app.include_router(monitoring_router)
+app.include_router(routing_router)
+
 
 @app.get("/")
 def home():
