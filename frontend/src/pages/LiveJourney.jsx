@@ -915,18 +915,23 @@ function LiveJourney() {
 
 
             setCurrentLocation(
-              newLocation
-            );
+  newLocation
+);
 
+if (warmupActiveRef.current) {
+  // During GPS calibration, do not treat
+  // early GPS drift as real walking.
+  setWalkingSpeed(0);
+  setStationaryDuration(0);
+} else {
+  setWalkingSpeed(
+    calculatedSpeed
+  );
 
-            setWalkingSpeed(
-              calculatedSpeed
-            );
-
-
-            setStationaryDuration(
-              stationarySeconds
-            );
+  setStationaryDuration(
+    stationarySeconds
+  );
+}
 
 
             /*
