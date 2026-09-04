@@ -1036,14 +1036,6 @@ function MonitoringMap({
       )}
 
       {visibleRouteCoordinates.length > 1 && (
-        <div className="route-summary">
-          <div className="route-summary-card">
-            <span>🚶 Remaining Distance</span>
-            <strong>{formatDistance(stableRemainingMetres)}</strong>
-            <small>
-              Updates from your position without rebuilding the route.
-            </small>
-          </div>
 
           <div className="route-summary-card">
             <span>⏱ Estimated Time Left</span>

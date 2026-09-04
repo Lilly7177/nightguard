@@ -359,6 +359,9 @@ function LiveJourney() {
       initialLocation || null
     );
 
+  const movementConfirmationRef =
+  useRef(0);
+
 
   const stationaryStartedAtRef =
     useRef(
@@ -477,6 +480,34 @@ function LiveJourney() {
       );
     };
   }, []);
+
+
+  // =========================================
+// STATIONARY DISPLAY TIMER
+// Updates the UI every second
+// =========================================
+
+useEffect(() => {
+  const stationaryTimer = setInterval(() => {
+    if (
+      !warmupActiveRef.current &&
+      stationaryStartedAtRef.current
+    ) {
+      const seconds = Math.floor(
+        (
+          Date.now() -
+          stationaryStartedAtRef.current
+        ) / 1000
+      );
+
+      setStationaryDuration(seconds);
+    }
+  }, 1000);
+
+  return () => {
+    clearInterval(stationaryTimer);
+  };
+}, []);
 
 
   // =========================================
@@ -876,38 +907,46 @@ function LiveJourney() {
              * B) speed suggests walking AND
              * the device moved at least 2 m.
              */
-            const meaningfulMovement =
-              (
-                movementDistance >=
-                  movementThreshold
-              ) ||
-              (
-                calculatedSpeed >=
-                  0.5 &&
-                movementDistance >=
-                  2
-              );
+            const possibleMovement =
+  (
+    movementDistance >=
+      movementThreshold
+  ) ||
+  (
+    calculatedSpeed >=
+      0.5 &&
+    movementDistance >=
+      2
+  );
 
 
-            if (
-              meaningfulMovement
-            ) {
-              stationaryStartedAtRef
-                .current =
-                Date.now();
+if (possibleMovement) {
+  movementConfirmationRef.current += 1;
+} else {
+  movementConfirmationRef.current = 0;
+}
 
-              stationarySeconds =
-                0;
-            } else {
-              stationarySeconds =
-                Math.floor(
-                  (
-                    Date.now() -
-                    stationaryStartedAtRef
-                      .current
-                  ) / 1000
-                );
-            }
+
+const meaningfulMovement =
+  movementConfirmationRef.current >= 3;
+
+
+if (meaningfulMovement) {
+  stationaryStartedAtRef.current =
+    Date.now();
+
+  stationarySeconds = 0;
+} else {
+  calculatedSpeed = 0;
+
+  stationarySeconds =
+    Math.floor(
+      (
+        Date.now() -
+        stationaryStartedAtRef.current
+      ) / 1000
+    );
+}
 
 
             previousLocationRef.current =
