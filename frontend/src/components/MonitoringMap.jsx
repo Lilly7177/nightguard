@@ -1034,20 +1034,25 @@ function MonitoringMap({
           {routeError}
         </div>
       )}
-
+      
       {visibleRouteCoordinates.length > 1 && (
+  <div className="route-summary">
+    <div className="route-summary-card">
+      <span>⏱ Estimated Time Left</span>
 
-          <div className="route-summary-card">
-            <span>⏱ Estimated Time Left</span>
-            <strong>
-              {formatWalkingDuration(estimatedRemainingDuration)}
-            </strong>
-            <small>
-              Based on the pedestrian route returned by NightGuard.
-            </small>
-          </div>
-        </div>
-      )}
+      <strong>
+        {formatWalkingDuration(
+          estimatedRemainingDuration
+        )}
+      </strong>
+
+      <small>
+        Based on the pedestrian route returned by NightGuard.
+      </small>
+    </div>
+  </div>
+)}
+
     </section>
   );
 }
