@@ -55,7 +55,7 @@ const [showLocationPermission, setShowLocationPermission] =
       "/sounds/timer.mp3"
     );
 
-    audio.volume = 0.01;
+    audio.volume = 0;
 
     await audio.play();
 

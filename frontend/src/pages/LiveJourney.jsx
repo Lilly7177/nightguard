@@ -489,10 +489,7 @@ function LiveJourney() {
 
 useEffect(() => {
   const stationaryTimer = setInterval(() => {
-    if (
-      !warmupActiveRef.current &&
-      stationaryStartedAtRef.current
-    ) {
+    if (stationaryStartedAtRef.current) { 
       const seconds = Math.floor(
         (
           Date.now() -
@@ -961,7 +958,6 @@ if (warmupActiveRef.current) {
   // During GPS calibration, do not treat
   // early GPS drift as real walking.
   setWalkingSpeed(0);
-  setStationaryDuration(0);
 } else {
   setWalkingSpeed(
     calculatedSpeed
