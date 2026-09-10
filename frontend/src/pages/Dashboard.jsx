@@ -608,55 +608,6 @@ function Dashboard() {
         )}
 
 
-        {/* =====================================
-            PROFILE
-        ===================================== */}
-
-        <section className="profile-card">
-
-          <div className="profile-icon">
-            👤
-          </div>
-
-
-          <div className="profile-details">
-
-            <p className="profile-label">
-              YOUR PROFILE
-            </p>
-
-            <h2>
-              {user?.full_name || "User"}
-            </h2>
-
-            <p>
-              {user?.email || "Email not available"}
-            </p>
-
-            {user?.phone_number && (
-
-              <p>
-                {user.phone_number}
-              </p>
-
-            )}
-
-          </div>
-
-
-          <button
-            type="button"
-            className="profile-settings-btn"
-            onClick={() =>
-              navigate("/settings")
-            }
-          >
-            Manage
-          </button>
-
-        </section>
-
-
       </main>
 
     </div>
