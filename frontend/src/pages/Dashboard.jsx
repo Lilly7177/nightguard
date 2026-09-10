@@ -15,6 +15,7 @@ import API_BASE_URL from "../api";
 
 
 function Dashboard() {
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -22,6 +23,7 @@ function Dashboard() {
   let user = null;
 
   try {
+
     const savedUser =
       localStorage.getItem("user");
 
@@ -30,6 +32,7 @@ function Dashboard() {
       : null;
 
   } catch (error) {
+
     console.error(
       "Unable to read user data:",
       error
@@ -37,19 +40,27 @@ function Dashboard() {
   }
 
 
-  const [statistics, setStatistics] =
-    useState({
-      total_journeys: 0,
-      safe_journeys: 0,
-      sos_activated: 0,
-      cancelled_journeys: 0
-    });
+  const [
+    statistics,
+    setStatistics
+  ] = useState({
+    total_journeys: 0,
+    safe_journeys: 0,
+    sos_activated: 0,
+    cancelled_journeys: 0
+  });
 
 
   const [
     loadingStatistics,
     setLoadingStatistics
   ] = useState(true);
+
+
+  const [
+    showJourneyOverview,
+    setShowJourneyOverview
+  ] = useState(false);
 
 
   const [
@@ -65,92 +76,105 @@ function Dashboard() {
   );
 
 
-  // =====================================================
+  // =========================================
   // LOGIN SUCCESS TOAST
-  // =====================================================
+  // =========================================
 
   useEffect(() => {
+
     if (!loginToast) {
       return;
     }
 
     const timer =
       window.setTimeout(() => {
+
         setLoginToast("");
+
       }, 3000);
 
-    /*
-      Remove login state from browser history
-      so refreshing the dashboard does not
-      show the toast again.
-    */
+
     window.history.replaceState(
       {},
       document.title
     );
 
+
     return () => {
       window.clearTimeout(timer);
     };
+
   }, [loginToast]);
 
 
-  // =====================================================
+  // =========================================
   // LOAD USER STATISTICS
-  // =====================================================
+  // =========================================
 
   useEffect(() => {
+
     if (!user?.id) {
-      navigate("/login", {
-        replace: true
-      });
+
+      navigate(
+        "/login",
+        {
+          replace: true
+        }
+      );
 
       return;
     }
 
 
-    const loadStatistics = async () => {
-      try {
-        setLoadingStatistics(true);
+    const loadStatistics =
+      async () => {
 
-        const response =
-          await axios.get(
-            `${API_BASE_URL}/monitoring/user/${user.id}/statistics`
+        try {
+
+          setLoadingStatistics(true);
+
+
+          const response =
+            await axios.get(
+              `${API_BASE_URL}/monitoring/user/${user.id}/statistics`
+            );
+
+
+          setStatistics({
+
+            total_journeys:
+              response.data.total_journeys ??
+              0,
+
+            safe_journeys:
+              response.data.safe_journeys ??
+              0,
+
+            sos_activated:
+              response.data.sos_activated ??
+              0,
+
+            cancelled_journeys:
+              response.data.cancelled_journeys ??
+              0
+
+          });
+
+
+        } catch (error) {
+
+          console.error(
+            "Unable to load journey statistics:",
+            error
           );
 
 
-        setStatistics({
-          total_journeys:
-            response.data.total_journeys ??
-            0,
+        } finally {
 
-          safe_journeys:
-            response.data.safe_journeys ??
-            0,
+          setLoadingStatistics(false);
 
-          sos_activated:
-            response.data.sos_activated ??
-            0,
-
-          cancelled_journeys:
-            response.data.cancelled_journeys ??
-            0
-        });
-
-
-      } catch (error) {
-
-        console.error(
-          "Unable to load journey statistics:",
-          error
-        );
-
-
-      } finally {
-
-        setLoadingStatistics(false);
-      }
-    };
+        }
+      };
 
 
     loadStatistics();
@@ -161,61 +185,46 @@ function Dashboard() {
   ]);
 
 
-  // =====================================================
+  // =========================================
   // LOGOUT
-  // =====================================================
+  // =========================================
 
   const handleLogout = () => {
+
     localStorage.removeItem("user");
 
-    navigate("/login", {
-      replace: true
-    });
+    navigate(
+      "/login",
+      {
+        replace: true
+      }
+    );
   };
 
 
   return (
+
     <div className="dashboard-page">
 
 
-      {/* ===============================================
-          LOGIN SUCCESS TOAST
-      =============================================== */}
+      {/* LOGIN SUCCESS */}
 
       {loginToast && (
 
-        <div
-          style={{
-            position: "fixed",
-            top: "22px",
-            right: "22px",
-            zIndex: 9999,
-            minWidth: "240px",
-            maxWidth: "340px",
-            padding: "14px 18px",
-            borderRadius: "12px",
-            background:
-              "linear-gradient(135deg, #ec4899, #be185d)",
-            color: "#ffffff",
-            boxShadow:
-              "0 12px 30px rgba(0,0,0,0.35)",
-            border:
-              "1px solid rgba(255,255,255,0.15)",
-            fontWeight: "700"
-          }}
-        >
-          ✅ {loginToast}
+        <div className="dashboard-login-toast">
+
+          ✓ {loginToast}
+
         </div>
 
       )}
 
 
-      {/* ===============================================
+      {/* =====================================
           HEADER
-      =============================================== */}
+      ===================================== */}
 
       <header className="dashboard-header">
-
 
         <div
           className="dashboard-logo"
@@ -227,211 +236,383 @@ function Dashboard() {
         </div>
 
 
-        <div className="dashboard-user">
-
-
-          <span>
-            {user?.full_name || "User"}
-          </span>
-
-
-          <button
-            type="button"
-            className="logout-header-btn"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
-
-
-        </div>
-
+        <button
+          type="button"
+          className="logout-header-btn"
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
 
       </header>
 
 
-      {/* ===============================================
+      {/* =====================================
           MAIN CONTENT
-      =============================================== */}
+      ===================================== */}
 
       <main className="dashboard-content">
 
 
-        {/* =============================================
-            WELCOME
-        ============================================= */}
+        {/* WELCOME */}
 
         <section className="welcome-section">
 
+          <p className="welcome-label">
+            USER DASHBOARD
+          </p>
 
-          <div>
+          <h1>
+            Welcome back,{" "}
+            {user?.full_name || "User"} 👋
+          </h1>
 
-
-            <p className="welcome-label">
-              USER DASHBOARD
-            </p>
-
-
-            <h1>
-              Welcome back,{" "}
-              {user?.full_name || "User"} 👋
-            </h1>
-
-
-            <p>
-              Manage your safety tools, trusted
-              contacts and emergency services from
-              one secure place.
-            </p>
-
-
-          </div>
-
-
-          <div className="status-badge">
-
-            <span className="status-dot"></span>
-
-            System Active
-
-          </div>
-
+          <p className="welcome-subtitle">
+            Stay safe, stay aware.
+          </p>
 
         </section>
 
 
-        {/* =============================================
-            STATISTICS
-        ============================================= */}
+        {/* =====================================
+            MAIN DASHBOARD GRID
+        ===================================== */}
 
-        <section className="dashboard-statistics">
-
-
-          <div className="dashboard-stat-card">
+        <section className="dashboard-grid">
 
 
-            <span className="stat-icon">
-              🚶
+          {/* START NIGHT MONITORING */}
+
+          <button
+            type="button"
+            className="
+              dashboard-action-card
+              monitoring-action-card
+            "
+            onClick={() =>
+              navigate("/monitoring")
+            }
+          >
+
+            <span className="dashboard-card-icon">
+              🌙
             </span>
 
-
-            <div>
-
-              <p>
-                Total Journeys
-              </p>
-
-
-              <strong>
-
-                {loadingStatistics
-                  ? "..."
-                  : statistics.total_journeys}
-
-              </strong>
-
-            </div>
-
-
-          </div>
-
-
-          <div className="dashboard-stat-card safe-stat-card">
-
-
-            <span className="stat-icon">
-              🛡️
+            <span className="dashboard-card-title">
+              Start Night Monitoring
             </span>
 
+            <span className="dashboard-card-description">
+              Start your monitored walking journey.
+            </span>
 
-            <div>
-
-              <p>
-                Safe Journeys
-              </p>
-
-
-              <strong>
-
-                {loadingStatistics
-                  ? "..."
-                  : statistics.safe_journeys}
-
-              </strong>
-
-            </div>
+          </button>
 
 
-          </div>
+          {/* JOURNEY OVERVIEW */}
+
+          <button
+            type="button"
+            className={`
+              dashboard-action-card
+              ${
+                showJourneyOverview
+                  ? "active-dashboard-card"
+                  : ""
+              }
+            `}
+            onClick={() =>
+              setShowJourneyOverview(
+                (current) => !current
+              )
+            }
+            aria-expanded={
+              showJourneyOverview
+            }
+          >
+
+            <span className="dashboard-card-icon">
+              📊
+            </span>
+
+            <span className="dashboard-card-title">
+              Journey Overview
+            </span>
+
+            <span className="dashboard-card-description">
+              View your journey statistics.
+            </span>
+
+          </button>
 
 
-          <div className="dashboard-stat-card sos-stat-card">
+          {/* TRUSTED CONTACTS */}
+
+          <button
+            type="button"
+            className="dashboard-action-card"
+            onClick={() =>
+              navigate("/contacts")
+            }
+          >
+
+            <span className="dashboard-card-icon">
+              👥
+            </span>
+
+            <span className="dashboard-card-title">
+              Trusted Contacts
+            </span>
+
+            <span className="dashboard-card-description">
+              Manage emergency contacts.
+            </span>
+
+          </button>
 
 
-            <span className="stat-icon">
+          {/* EMERGENCY ALERT */}
+
+          <button
+            type="button"
+            className="
+              dashboard-action-card
+              emergency-action-card
+            "
+            onClick={() =>
+              navigate("/emergency")
+            }
+          >
+
+            <span className="dashboard-card-icon">
               🚨
             </span>
 
-
-            <div>
-
-              <p>
-                SOS Activated
-              </p>
-
-
-              <strong>
-
-                {loadingStatistics
-                  ? "..."
-                  : statistics.sos_activated}
-
-              </strong>
-
-            </div>
-
-
-          </div>
-
-
-          <div className="dashboard-stat-card cancelled-stat-card">
-
-
-            <span className="stat-icon">
-              ❌
+            <span className="dashboard-card-title">
+              Emergency Alert
             </span>
 
+            <span className="dashboard-card-description">
+              Access emergency assistance.
+            </span>
 
-            <div>
-
-              <p>
-                Cancelled Journeys
-              </p>
-
-
-              <strong>
-
-                {loadingStatistics
-                  ? "..."
-                  : statistics.cancelled_journeys}
-
-              </strong>
-
-            </div>
+          </button>
 
 
-          </div>
+          {/* ALERT HISTORY */}
+
+          <button
+            type="button"
+            className="dashboard-action-card"
+            onClick={() =>
+              navigate("/history")
+            }
+          >
+
+            <span className="dashboard-card-icon">
+              📜
+            </span>
+
+            <span className="dashboard-card-title">
+              Alert History
+            </span>
+
+            <span className="dashboard-card-description">
+              View previous safety alerts.
+            </span>
+
+          </button>
+
+
+          {/* SETTINGS */}
+
+          <button
+            type="button"
+            className="dashboard-action-card"
+            onClick={() =>
+              navigate("/settings")
+            }
+          >
+
+            <span className="dashboard-card-icon">
+              ⚙️
+            </span>
+
+            <span className="dashboard-card-title">
+              Settings
+            </span>
+
+            <span className="dashboard-card-description">
+              Manage your preferences.
+            </span>
+
+          </button>
 
 
         </section>
 
 
-        {/* =============================================
+        {/* =====================================
+            JOURNEY OVERVIEW
+        ===================================== */}
+
+        {showJourneyOverview && (
+
+          <section className="journey-overview-panel">
+
+            <div className="journey-overview-header">
+
+              <div>
+
+                <p className="journey-overview-label">
+                  JOURNEY STATISTICS
+                </p>
+
+                <h2>
+                  Journey Overview
+                </h2>
+
+              </div>
+
+
+              <button
+                type="button"
+                className="overview-close-btn"
+                onClick={() =>
+                  setShowJourneyOverview(false)
+                }
+                aria-label="Close journey overview"
+              >
+                ×
+              </button>
+
+            </div>
+
+
+            <div className="dashboard-statistics">
+
+
+              <div className="dashboard-stat-card">
+
+                <span className="stat-icon">
+                  🚶
+                </span>
+
+                <div>
+
+                  <p>
+                    Total Journeys
+                  </p>
+
+                  <strong>
+
+                    {loadingStatistics
+                      ? "..."
+                      : statistics.total_journeys}
+
+                  </strong>
+
+                </div>
+
+              </div>
+
+
+              <div className="
+                dashboard-stat-card
+                safe-stat-card
+              ">
+
+                <span className="stat-icon">
+                  🛡️
+                </span>
+
+                <div>
+
+                  <p>
+                    Safe Journeys
+                  </p>
+
+                  <strong>
+
+                    {loadingStatistics
+                      ? "..."
+                      : statistics.safe_journeys}
+
+                  </strong>
+
+                </div>
+
+              </div>
+
+
+              <div className="
+                dashboard-stat-card
+                sos-stat-card
+              ">
+
+                <span className="stat-icon">
+                  🚨
+                </span>
+
+                <div>
+
+                  <p>
+                    SOS Activated
+                  </p>
+
+                  <strong>
+
+                    {loadingStatistics
+                      ? "..."
+                      : statistics.sos_activated}
+
+                  </strong>
+
+                </div>
+
+              </div>
+
+
+              <div className="
+                dashboard-stat-card
+                cancelled-stat-card
+              ">
+
+                <span className="stat-icon">
+                  ❌
+                </span>
+
+                <div>
+
+                  <p>
+                    Cancelled Journeys
+                  </p>
+
+                  <strong>
+
+                    {loadingStatistics
+                      ? "..."
+                      : statistics.cancelled_journeys}
+
+                  </strong>
+
+                </div>
+
+              </div>
+
+
+            </div>
+
+          </section>
+
+        )}
+
+
+        {/* =====================================
             PROFILE
-        ============================================= */}
+        ===================================== */}
 
         <section className="profile-card">
-
 
           <div className="profile-icon">
             👤
@@ -440,272 +621,46 @@ function Dashboard() {
 
           <div className="profile-details">
 
+            <p className="profile-label">
+              YOUR PROFILE
+            </p>
 
             <h2>
-              Your Profile
+              {user?.full_name || "User"}
             </h2>
 
-
             <p>
-              <strong>Name:</strong>{" "}
-              {user?.full_name ||
-                "Not available"}
+              {user?.email || "Email not available"}
             </p>
 
+            {user?.phone_number && (
 
-            <p>
-              <strong>Email:</strong>{" "}
-              {user?.email ||
-                "Not available"}
-            </p>
+              <p>
+                {user.phone_number}
+              </p>
 
-
-            <p>
-              <strong>Phone:</strong>{" "}
-              {user?.phone_number ||
-                "Not available"}
-            </p>
-
+            )}
 
           </div>
 
 
-        </section>
-
-
-        {/* =============================================
-            FEATURE GRID
-        ============================================= */}
-
-        <section className="dashboard-grid">
-
-
           <button
             type="button"
-            className="dashboard-feature-card"
-            onClick={() =>
-              navigate("/contacts")
-            }
-          >
-
-
-            <span className="feature-icon">
-              👥
-            </span>
-
-
-            <div>
-
-
-              <h3>
-                Trusted Contacts
-              </h3>
-
-
-              <p>
-                Add and manage your emergency
-                contacts.
-              </p>
-
-
-            </div>
-
-
-            <span className="feature-arrow">
-              →
-            </span>
-
-
-          </button>
-
-
-          <button
-            type="button"
-            className="dashboard-feature-card emergency-card"
-            onClick={() =>
-              navigate("/emergency")
-            }
-          >
-
-
-            <span className="feature-icon">
-              🚨
-            </span>
-
-
-            <div>
-
-
-              <h3>
-                Emergency Alert
-              </h3>
-
-
-              <p>
-                Send an emergency SOS alert
-                instantly.
-              </p>
-
-
-            </div>
-
-
-            <span className="feature-arrow">
-              →
-            </span>
-
-
-          </button>
-
-
-          <button
-            type="button"
-            className="dashboard-feature-card"
-            onClick={() =>
-              navigate("/history")
-            }
-          >
-
-
-            <span className="feature-icon">
-              📜
-            </span>
-
-
-            <div>
-
-
-              <h3>
-                Alert History
-              </h3>
-
-
-              <p>
-                View previous emergency alert
-                records.
-              </p>
-
-
-            </div>
-
-
-            <span className="feature-arrow">
-              →
-            </span>
-
-
-          </button>
-
-
-          <button
-            type="button"
-            className="dashboard-feature-card"
+            className="profile-settings-btn"
             onClick={() =>
               navigate("/settings")
             }
           >
-
-
-            <span className="feature-icon">
-              ⚙️
-            </span>
-
-
-            <div>
-
-
-              <h3>
-                Settings
-              </h3>
-
-
-              <p>
-                Manage your profile and account
-                preferences.
-              </p>
-
-
-            </div>
-
-
-            <span className="feature-arrow">
-              →
-            </span>
-
-
+            Manage
           </button>
-
-
-        </section>
-
-
-        {/* =============================================
-            NIGHT MONITORING
-        ============================================= */}
-
-        <section className="monitoring-section">
-
-
-          <button
-            type="button"
-            className="monitoring-main-card"
-            onClick={() =>
-              navigate("/monitoring")
-            }
-          >
-
-
-            <div className="monitoring-main-content">
-
-
-              <div className="monitoring-main-icon">
-                🌙
-              </div>
-
-
-              <div className="monitoring-main-text">
-
-
-                <p className="monitoring-main-label">
-                  MAIN SAFETY FEATURE
-                </p>
-
-
-                <h2>
-                  Start Night Monitoring
-                </h2>
-
-
-                <p>
-                  Begin your journey with live GPS
-                  tracking, risk monitoring and
-                  automatic emergency protection.
-                </p>
-
-
-              </div>
-
-
-            </div>
-
-
-            <div className="monitoring-main-action">
-
-              ▶ Start Monitoring
-
-            </div>
-
-
-          </button>
-
 
         </section>
 
 
       </main>
 
-
     </div>
+
   );
 }
 
