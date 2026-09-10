@@ -883,6 +883,10 @@ function MonitoringMap({
     );
   }, [stableRemainingMetres, routeInformation]);
 
+  const journeyArrived =
+  stableRemainingMetres !== null &&
+  stableRemainingMetres <= 1;
+
   const formatDistance = (distanceInMetres) => {
     if (distanceInMetres === null) {
       return "Not available";
@@ -963,8 +967,9 @@ function MonitoringMap({
             </Popup>
           </Marker>
 
-          {visibleRouteCoordinates.length > 1 && (
-            <Polyline
+          {!journeyArrived &&
+  visibleRouteCoordinates.length > 1 && (
+  <Polyline
               positions={visibleRouteCoordinates}
               pathOptions={{
                 color: "#ec4899",
@@ -1035,19 +1040,28 @@ function MonitoringMap({
         </div>
       )}
       
-      {visibleRouteCoordinates.length > 1 && (
+      {(visibleRouteCoordinates.length > 1 ||
+  journeyArrived) && (
   <div className="route-summary">
     <div className="route-summary-card">
-      <span>⏱ Estimated Time Left</span>
+      <span>
+        {journeyArrived
+          ? "✅ Destination"
+          : "⏱ Estimated Time Left"}
+      </span>
 
       <strong>
-        {formatWalkingDuration(
-          estimatedRemainingDuration
-        )}
+        {journeyArrived
+          ? "Arrived"
+          : formatWalkingDuration(
+              estimatedRemainingDuration
+            )}
       </strong>
 
       <small>
-        Based on the pedestrian route returned by NightGuard.
+        {journeyArrived
+          ? "You have reached your destination."
+          : "Based on the pedestrian route returned by NightGuard."}
       </small>
     </div>
   </div>

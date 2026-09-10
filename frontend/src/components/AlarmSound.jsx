@@ -15,11 +15,11 @@ function AlarmSound({
       return;
     }
 
-    const audio = new Audio(
-      mode === "emergency"
-        ? "/sounds/warning.mp3"
-        : "/sounds/timer.mp3"
-    );
+   const audio = new Audio(
+  mode === "warning" || mode === "emergency"
+    ? "/sounds/warning.mp3"
+    : "/sounds/timer.mp3"
+);
 
     audio.loop = true;
     audio.volume = 1.0;

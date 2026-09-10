@@ -489,7 +489,19 @@ function LiveJourney() {
 
 useEffect(() => {
   const stationaryTimer = setInterval(() => {
-    if (stationaryStartedAtRef.current) { 
+
+    /*
+     * While walking is currently confirmed,
+     * keep Stationary Time at 00:00.
+     */
+    if (
+      movementConfirmationRef.current >= 2
+    ) {
+      setStationaryDuration(0);
+      return;
+    }
+
+    if (stationaryStartedAtRef.current) {
       const seconds = Math.floor(
         (
           Date.now() -
@@ -499,6 +511,7 @@ useEffect(() => {
 
       setStationaryDuration(seconds);
     }
+
   }, 1000);
 
   return () => {
@@ -918,14 +931,21 @@ useEffect(() => {
 
 
 if (possibleMovement) {
-  movementConfirmationRef.current += 1;
+  movementConfirmationRef.current =
+    Math.min(
+      movementConfirmationRef.current + 1,
+      3
+    );
 } else {
-  movementConfirmationRef.current = 0;
+  movementConfirmationRef.current =
+    Math.max(
+      movementConfirmationRef.current - 1,
+      0
+    );
 }
 
-
 const meaningfulMovement =
-  movementConfirmationRef.current >= 3;
+  movementConfirmationRef.current >= 2;
 
 
 if (meaningfulMovement) {
@@ -1240,17 +1260,6 @@ if (warmupActiveRef.current) {
           "error"
         );
 
-        return;
-      }
-
-
-      const confirmed =
-        window.confirm(
-          "Are you sure you want to cancel this journey?"
-        );
-
-
-      if (!confirmed) {
         return;
       }
 
@@ -2014,7 +2023,7 @@ if (warmupActiveRef.current) {
           showSOS
         }
 
-        mode="warning"
+        mode="timer"
       />
 
 
