@@ -30,7 +30,7 @@ const OFF_ROUTE_ENTER_METRES = 30;
 const OFF_ROUTE_EXIT_METRES = 18;
 const OFF_ROUTE_MIN_FIXES = 3;
 const OFF_ROUTE_SUSTAINED_MS = 10000;
-const REROUTE_COOLDOWN_MS = 15000;
+
 
 const METRES_PER_MILE = 1609.344;
 const EARTH_RADIUS_METRES = 6371000;
@@ -502,7 +502,8 @@ function MonitoringMap({
   requestingLocation = false,
   onTotalDistanceChange,
   onRemainingDistanceChange,
-  onOffRouteChange
+  onOffRouteChange,
+  rerouteRequestKey = 0
 }) {
   const [routeCoordinates, setRouteCoordinates] = useState([]);
   const [routeInformation, setRouteInformation] = useState({
@@ -526,6 +527,8 @@ function MonitoringMap({
   const offRouteFixesRef = useRef(0);
   const offRouteActiveRef = useRef(false);
   const reroutePendingRef = useRef(false);
+  const handledRerouteRequestRef =
+  useRef(0);
 
   const currentPosition = useMemo(() => {
     if (!currentLocation) {
@@ -788,68 +791,136 @@ function MonitoringMap({
     routeRevision
   ]);
 
-  // Sustained off-route detection with hysteresis and reroute cooldown.
-  useEffect(() => {
+ // Sustained off-route detection.
+// Detection only: wait for the user to decide
+// whether NightGuard should create a new route.
+useEffect(() => {
+  if (
+    !monitoringActive ||
+    !currentProjection ||
+    routeCoordinates.length < 2
+  ) {
+    return;
+  }
+
+  const distanceFromRoute =
+    currentProjection.distanceToRouteMetres;
+
+  const now = Date.now();
+
+  /*
+   * User has returned close to the
+   * planned route.
+   */
+  if (
+    distanceFromRoute <=
+    OFF_ROUTE_EXIT_METRES
+  ) {
+    clearOffRouteState();
+    return;
+  }
+
+  /*
+   * Ignore small GPS deviations.
+   */
+  if (
+    distanceFromRoute <
+    OFF_ROUTE_ENTER_METRES
+  ) {
+    return;
+  }
+
+  /*
+   * First genuine off-route GPS fix.
+   */
+  if (
+    offRouteStartedAtRef.current ===
+    null
+  ) {
+    offRouteStartedAtRef.current =
+      now;
+
+    offRouteFixesRef.current = 1;
+
+    return;
+  }
+
+  offRouteFixesRef.current += 1;
+
+  const sustainedFor =
+    now -
+    offRouteStartedAtRef.current;
+
+  /*
+   * Confirm off-route only after:
+   * - at least 30 metres deviation
+   * - at least 10 seconds
+   * - at least 3 GPS fixes
+   */
+  if (
+    sustainedFor >=
+      OFF_ROUTE_SUSTAINED_MS &&
+    offRouteFixesRef.current >=
+      OFF_ROUTE_MIN_FIXES
+  ) {
     if (
-      !monitoringActive ||
-      !currentProjection ||
-      routeCoordinates.length < 2
+      !offRouteActiveRef.current
     ) {
-      return;
+      offRouteActiveRef.current =
+        true;
+
+      onOffRouteChange?.(
+        true
+      );
     }
+  }
+}, [
+  clearOffRouteState,
+  currentProjection,
+  monitoringActive,
+  onOffRouteChange,
+  routeCoordinates.length
+]);
 
-    const distanceFromRoute = currentProjection.distanceToRouteMetres;
-    const now = Date.now();
 
-    if (distanceFromRoute <= OFF_ROUTE_EXIT_METRES) {
-      clearOffRouteState();
-      return;
-    }
+/*
+ * User-approved rerouting.
+ *
+ * LiveJourney increments rerouteRequestKey
+ * only after the user confirms that the
+ * deviation is intentional.
+ */
+useEffect(() => {
+  if (
+    !monitoringActive ||
+    !rerouteRequestKey ||
+    rerouteRequestKey ===
+      handledRerouteRequestRef.current ||
+    !currentPosition ||
+    !destinationPosition ||
+    loadingRoute
+  ) {
+    return;
+  }
 
-    if (distanceFromRoute < OFF_ROUTE_ENTER_METRES) {
-      return;
-    }
+  handledRerouteRequestRef.current =
+    rerouteRequestKey;
 
-    if (offRouteStartedAtRef.current === null) {
-      offRouteStartedAtRef.current = now;
-      offRouteFixesRef.current = 1;
-      return;
-    }
+  reroutePendingRef.current =
+    true;
 
-    offRouteFixesRef.current += 1;
+  requestRoute({
+    reason: "off-route"
+  });
 
-    const sustainedFor = now - offRouteStartedAtRef.current;
-    const cooldownFinished =
-      now - lastRerouteAtRef.current >= REROUTE_COOLDOWN_MS;
-
-    if (
-      sustainedFor >= OFF_ROUTE_SUSTAINED_MS &&
-      offRouteFixesRef.current >= OFF_ROUTE_MIN_FIXES
-    ) {
-      if (!offRouteActiveRef.current) {
-        offRouteActiveRef.current = true;
-        onOffRouteChange?.(true);
-      }
-
-      if (
-        cooldownFinished &&
-        !reroutePendingRef.current &&
-        !loadingRoute
-      ) {
-        reroutePendingRef.current = true;
-        lastRerouteAtRef.current = now;
-        requestRoute({ reason: "off-route" });
-      }
-    }
-  }, [
-    clearOffRouteState,
-    currentProjection,
-    loadingRoute,
-    monitoringActive,
-    onOffRouteChange,
-    requestRoute,
-    routeCoordinates.length
-  ]);
+}, [
+  currentPosition,
+  destinationPosition,
+  loadingRoute,
+  monitoringActive,
+  requestRoute,
+  rerouteRequestKey
+]);
 
   useEffect(() => {
     if (monitoringActive) {

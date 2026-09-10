@@ -1219,3 +1219,168 @@
         font-size: 13px;
     }
 }
+
+/* =====================================
+   OFF-ROUTE CONFIRMATION POPUP
+===================================== */
+
+.off-route-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(0, 0, 0, 0.78);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+.off-route-popup {
+    width: 100%;
+    max-width: 430px;
+
+    padding: 28px 24px;
+
+    background: #151015;
+
+    border: 1px solid rgba(236, 72, 153, 0.45);
+    border-radius: 20px;
+
+    text-align: center;
+}
+
+.off-route-icon {
+    margin-bottom: 10px;
+
+    font-size: 42px;
+    line-height: 1;
+}
+
+.off-route-popup h2 {
+    margin: 0 0 10px;
+
+    color: #ffffff;
+
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.off-route-popup p {
+    margin: 0 0 12px;
+
+    color: #d1d5db;
+
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.off-route-popup > strong {
+    display: block;
+
+    margin-bottom: 22px;
+
+    color: #f9a8d4;
+
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.off-route-actions {
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+.off-route-actions button {
+    width: 100%;
+    min-height: 50px;
+
+    padding: 12px 16px;
+
+    border: none;
+    border-radius: 12px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.off-route-new-btn {
+    background: #ec4899;
+    color: #ffffff;
+}
+
+.off-route-new-btn:hover {
+    background: #db2777;
+}
+
+.off-route-original-btn {
+    background: #2a222a;
+    color: #ffffff;
+
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+.off-route-original-btn:hover {
+    background: #352b35;
+}
+
+.off-route-help-btn {
+    background: #b91c1c;
+    color: #ffffff;
+}
+
+.off-route-help-btn:hover {
+    background: #991b1b;
+}
+
+
+/* =====================================
+   OFF-ROUTE MOBILE
+===================================== */
+
+@media (max-width: 700px) {
+
+    .off-route-overlay {
+        padding: 16px;
+    }
+
+    .off-route-popup {
+        max-width: 360px;
+
+        padding: 24px 18px;
+
+        border-radius: 17px;
+    }
+
+    .off-route-icon {
+        font-size: 36px;
+    }
+
+    .off-route-popup h2 {
+        font-size: 22px;
+    }
+
+    .off-route-popup p {
+        font-size: 13px;
+    }
+
+    .off-route-popup > strong {
+        margin-bottom: 18px;
+
+        font-size: 14px;
+    }
+
+    .off-route-actions button {
+        min-height: 50px;
+
+        font-size: 13px;
+    }
+}

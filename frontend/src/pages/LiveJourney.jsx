@@ -318,6 +318,16 @@ function LiveJourney() {
     setRemainingDistance
   ] = useState(0);
 
+  const [
+  rerouteRequestKey,
+  setRerouteRequestKey
+] = useState(0);
+
+const [
+  showOffRoutePrompt,
+  setShowOffRoutePrompt
+] = useState(false);
+
 
   const warmupActive =
     elapsedSeconds <
@@ -397,6 +407,22 @@ function LiveJourney() {
   useEffect(() => {
     offRouteRef.current = offRoute;
   }, [offRoute]);
+
+  useEffect(() => {
+  if (offRoute) {
+    setShowOffRoutePrompt(true);
+
+    setMessage(
+      "NightGuard detected that you have moved away from the planned route."
+    );
+
+    setMessageType(
+      "warning"
+    );
+  } else {
+    setShowOffRoutePrompt(false);
+  }
+}, [offRoute]);
 
 
   useEffect(() => {
@@ -1358,6 +1384,41 @@ if (warmupActiveRef.current) {
     };
 
 
+    // =========================================
+// OFF-ROUTE USER DECISION
+// =========================================
+
+const useNewRoute =
+  () => {
+    setShowOffRoutePrompt(
+      false
+    );
+
+    showMessage(
+      "Updating your walking route from your current location...",
+      "information"
+    );
+
+    setRerouteRequestKey(
+      (current) =>
+        current + 1
+    );
+  };
+
+
+const keepOriginalRoute =
+  () => {
+    setShowOffRoutePrompt(
+      false
+    );
+
+    showMessage(
+      "Original route retained. NightGuard will continue monitoring the route deviation.",
+      "warning"
+    );
+  };
+
+
   // =========================================
   // MANUAL EMERGENCY
   // =========================================
@@ -1699,9 +1760,13 @@ if (warmupActiveRef.current) {
           }
 
           onOffRouteChange={
-            setOffRoute
-          }
-        />
+  setOffRoute
+}
+
+rerouteRequestKey={
+  rerouteRequestKey
+}
+/>
 
 
 
@@ -1905,20 +1970,20 @@ if (warmupActiveRef.current) {
               }
 
               onClick={() => {
-                const confirmed =
-                  window.confirm(
-                    hasReachedDestination
-                      ? "You are within about 50 metres of your destination. Confirm that you arrived safely?"
-                      : "Do you want to end this monitored journey?"
-                  );
+  if (hasReachedDestination) {
+    endJourney();
+    return;
+  }
 
+  const confirmed =
+    window.confirm(
+      "Do you want to end this monitored journey?"
+    );
 
-                if (
-                  confirmed
-                ) {
-                  endJourney();
-                }
-              }}
+  if (confirmed) {
+    endJourney();
+  }
+}}
 
               disabled={
                 ending
@@ -2011,6 +2076,84 @@ if (warmupActiveRef.current) {
 
 
       </main>
+
+      {/* =====================================
+    OFF-ROUTE CONFIRMATION
+===================================== */}
+
+{showOffRoutePrompt &&
+  !showSOS && (
+
+  <div className="off-route-overlay">
+
+    <div
+      className="off-route-popup"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="off-route-title"
+    >
+
+      <div className="off-route-icon">
+        ⚠️
+      </div>
+
+      <h2 id="off-route-title">
+        Off Route Detected
+      </h2>
+
+      <p>
+        You have moved away from the
+        planned walking route.
+      </p>
+
+      <strong>
+        Are you intentionally taking
+        another route?
+      </strong>
+
+      <div className="off-route-actions">
+
+        <button
+          type="button"
+          className="off-route-new-btn"
+          onClick={
+            useNewRoute
+          }
+        >
+          ✓ Yes, use this route
+        </button>
+
+        <button
+          type="button"
+          className="off-route-original-btn"
+          onClick={
+            keepOriginalRoute
+          }
+        >
+          ↩ No, guide me back
+        </button>
+
+        <button
+          type="button"
+          className="off-route-help-btn"
+          onClick={() => {
+            setShowOffRoutePrompt(
+              false
+            );
+
+            openEmergency();
+          }}
+        >
+          🚨 Need Help
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+)}
 
 
 
