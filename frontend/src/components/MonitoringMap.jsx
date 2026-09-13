@@ -62,18 +62,36 @@ const destinationIcon = L.divIcon({
   popupAnchor: [0, -40]
 });
 
-const userIcon = L.divIcon({
-  className: "live-user-marker-wrapper",
-  html: `
-    <div class="live-user-marker">
-      <div class="live-user-marker-pulse"></div>
-      <div class="live-user-marker-dot"></div>
-    </div>
-  `,
-  iconSize: [42, 42],
-  iconAnchor: [21, 21],
-  popupAnchor: [0, -18]
-});
+function createUserIcon(heading) {
+  const safeHeading =
+    Number.isFinite(heading)
+      ? heading
+      : 0;
+
+  return L.divIcon({
+    className:
+      "live-user-marker-wrapper",
+
+    html: `
+      <div class="live-user-marker">
+        <div class="live-user-marker-pulse"></div>
+
+        <div
+          class="live-user-direction"
+          style="transform: rotate(${safeHeading}deg);"
+        >
+          ▲
+        </div>
+
+        <div class="live-user-marker-dot"></div>
+      </div>
+    `,
+
+    iconSize: [42, 42],
+    iconAnchor: [21, 21],
+    popupAnchor: [0, -18]
+  });
+}
 
 // -----------------------------------------------------------------------------
 // Geometry helpers
@@ -217,7 +235,6 @@ function projectPositionOntoRoute(
 
   return bestProjection;
 }
-
 function createVisibleRoute(
   currentPosition,
   routeCoordinates,
@@ -236,20 +253,22 @@ function createVisibleRoute(
     routeCoordinates.length - 1
   );
 
-  const remaining = routeCoordinates.slice(nextRouteIndex);
+  const remaining =
+    routeCoordinates.slice(
+      nextRouteIndex
+    );
 
-  // When GPS is close to the route, start the line at the live marker so the
-  // route visually follows the walker. If the user is genuinely off-route,
-  // keep the old route separate until the clean reroute replaces it.
-  if (projection.distanceToRouteMetres <= OFF_ROUTE_ENTER_METRES) {
-    return [
-      currentPosition,
-      projection.projectedPosition,
-      ...remaining
-    ];
-  }
-
-  return [projection.projectedPosition, ...remaining];
+  /*
+   * Keep the displayed pink line on the
+   * actual pedestrian route.
+   *
+   * Do not draw an artificial diagonal line
+   * from a noisy GPS position back to the route.
+   */
+  return [
+    projection.projectedPosition,
+    ...remaining
+  ];
 }
 
 // -----------------------------------------------------------------------------
@@ -544,6 +563,23 @@ function MonitoringMap({
 
     return [latitude, longitude];
   }, [currentLocation?.latitude, currentLocation?.longitude]);
+
+  const currentHeading =
+  Number.isFinite(
+    Number(currentLocation?.heading)
+  )
+    ? Number(currentLocation.heading)
+    : null;
+
+
+const currentUserIcon =
+  useMemo(
+    () =>
+      createUserIcon(
+        currentHeading
+      ),
+    [currentHeading]
+  );
 
   const destinationPosition = useMemo(() => {
     if (!destination) {
@@ -1016,7 +1052,7 @@ useEffect(() => {
           />
 
           {currentPosition && (
-            <Marker position={currentPosition} icon={userIcon}>
+            <Marker position={currentPosition} icon={currentUserIcon}>
               <Popup>
                 <strong>Your live location</strong>
                 <br />

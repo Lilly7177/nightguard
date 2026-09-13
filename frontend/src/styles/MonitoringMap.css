@@ -395,3 +395,29 @@
         font-size: 20px;
     }
 }
+
+.live-user-direction {
+  position: absolute;
+  left: 50%;
+  top: -12px;
+  width: 18px;
+  height: 18px;
+  margin-left: -9px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 16px;
+  line-height: 1;
+
+  color: #ec4899;
+
+  transform-origin: 50% 21px;
+
+  z-index: 4;
+
+  text-shadow:
+    0 1px 3px
+    rgba(0, 0, 0, 0.7);
+}

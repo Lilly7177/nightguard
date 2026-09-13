@@ -814,76 +814,103 @@ useEffect(() => {
                 .current;
 
 
-            let calculatedSpeed =
-              Number.isFinite(
-                newLocation.speed
-              )
-                ? Math.max(
-                    0,
-                    newLocation.speed
-                  )
-                : 0;
+            /*
+ * Reliable walking-speed calculation.
+ *
+ * Some mobile browsers, especially iPhone/Safari,
+ * may report coords.speed as 0 even while the GPS
+ * position is clearly changing.
+ *
+ * We therefore compare the device-reported speed
+ * with a speed calculated from GPS displacement.
+ */
+
+const reportedSpeed =
+  Number.isFinite(
+    newLocation.speed
+  )
+    ? Math.max(
+        0,
+        newLocation.speed
+      )
+    : null;
 
 
-            let movementDistance =
-              0;
+let calculatedSpeed =
+  reportedSpeed ?? 0;
 
 
-            if (
-              previousLocation
-            ) {
-              movementDistance =
-                calculateDistanceMetres(
-                  previousLocation
-                    .latitude,
-
-                  previousLocation
-                    .longitude,
-
-                  newLocation
-                    .latitude,
-
-                  newLocation
-                    .longitude
-                );
+let movementDistance =
+  0;
 
 
-              const previousTimestamp =
-                previousLocation
-                  .timestamp ||
-                Date.now();
+if (previousLocation) {
+
+  movementDistance =
+    calculateDistanceMetres(
+      previousLocation.latitude,
+      previousLocation.longitude,
+      newLocation.latitude,
+      newLocation.longitude
+    );
 
 
-              const currentTimestamp =
-                newLocation
-                  .timestamp ||
-                Date.now();
+  const previousTimestamp =
+    previousLocation.timestamp ||
+    Date.now();
 
 
-              const timeDifferenceSeconds =
-                Math.max(
-                  1,
-                  (
-                    currentTimestamp -
-                    previousTimestamp
-                  ) / 1000
-                );
+  const currentTimestamp =
+    newLocation.timestamp ||
+    Date.now();
 
 
-              /*
-               * Some browsers do not provide
-               * position.coords.speed.
-               */
-              if (
-                !Number.isFinite(
-                  newLocation.speed
-                )
-              ) {
-                calculatedSpeed =
-                  movementDistance /
-                  timeDifferenceSeconds;
-              }
-            }
+  const timeDifferenceSeconds =
+    Math.max(
+      1,
+      (
+        currentTimestamp -
+        previousTimestamp
+      ) / 1000
+    );
+
+
+  const displacementSpeed =
+    movementDistance /
+    timeDifferenceSeconds;
+
+
+  /*
+   * Use browser/device speed when it looks
+   * useful. If the device reports zero or
+   * almost zero while the coordinates have
+   * genuinely moved, use displacement speed.
+   */
+  if (
+    reportedSpeed === null ||
+    (
+      reportedSpeed < 0.3 &&
+      movementDistance >= 2
+    )
+  ) {
+    calculatedSpeed =
+      displacementSpeed;
+  }
+
+
+  /*
+   * Prevent a noisy GPS jump from being
+   * displayed as walking speed.
+   */
+  if (
+    !Number.isFinite(
+      calculatedSpeed
+    ) ||
+    calculatedSpeed < 0
+  ) {
+    calculatedSpeed = 0;
+  }
+}
 
 
             /*
@@ -943,16 +970,22 @@ useEffect(() => {
              * B) speed suggests walking AND
              * the device moved at least 2 m.
              */
-            const possibleMovement =
+            const reliableAccuracy =
+  !Number.isFinite(newLocation.accuracy) ||
+  newLocation.accuracy <= 35;
+
+
+const possibleMovement =
   (
     movementDistance >=
       movementThreshold
   ) ||
   (
+    reliableAccuracy &&
     calculatedSpeed >=
-      0.5 &&
+      0.55 &&
     movementDistance >=
-      2
+      1.2
   );
 
 
