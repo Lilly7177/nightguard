@@ -34,6 +34,8 @@ const OFF_ROUTE_SUSTAINED_MS = 10000;
 
 const METRES_PER_MILE = 1609.344;
 const EARTH_RADIUS_METRES = 6371000;
+const ARRIVAL_DISTANCE_METRES = 50;
+const NEAR_DESTINATION_METRES = 100;
 
 // -----------------------------------------------------------------------------
 // Leaflet marker setup
@@ -596,6 +598,28 @@ const currentUserIcon =
     return [latitude, longitude];
   }, [destination?.latitude, destination?.longitude]);
 
+  const directDestinationDistanceMetres =
+  useMemo(() => {
+
+    if (
+      !currentPosition ||
+      !destinationPosition
+    ) {
+      return Infinity;
+    }
+
+    return calculateDistanceMetres(
+      currentPosition[0],
+      currentPosition[1],
+      destinationPosition[0],
+      destinationPosition[1]
+    );
+
+  }, [
+    currentPosition,
+    destinationPosition
+  ]);
+
   const cumulativeRouteDistances = useMemo(
     () => buildCumulativeDistances(routeCoordinates),
     [routeCoordinates]
@@ -672,10 +696,33 @@ const currentUserIcon =
         const remainingMiles = route.distanceMetres / METRES_PER_MILE;
         onRemainingDistanceChange?.(remainingMiles);
 
-        if (initialDistanceRef.current === null) {
-          initialDistanceRef.current = route.distanceMetres;
-          onTotalDistanceChange?.(remainingMiles);
-        }
+        if (reason === "initial") {
+
+  initialDistanceRef.current =
+    route.distanceMetres;
+
+  onTotalDistanceChange?.(
+    remainingMiles
+  );
+
+} else if (reason === "off-route") {
+
+  /*
+   * A user-approved reroute becomes the new
+   * active journey route.
+   *
+   * Reset both total and remaining distance
+   * together so route progress does not use
+   * the old route total with the new route
+   * remaining distance.
+   */
+  initialDistanceRef.current =
+    route.distanceMetres;
+
+  onTotalDistanceChange?.(
+    remainingMiles
+  );
+}
 
         if (reason === "off-route") {
           lastRerouteAtRef.current = Date.now();
@@ -991,8 +1038,23 @@ useEffect(() => {
   }, [stableRemainingMetres, routeInformation]);
 
   const journeyArrived =
-  stableRemainingMetres !== null &&
-  stableRemainingMetres <= 1;
+  (
+    stableRemainingMetres !== null &&
+    stableRemainingMetres <=
+      ARRIVAL_DISTANCE_METRES
+  ) ||
+  directDestinationDistanceMetres <=
+    ARRIVAL_DISTANCE_METRES;
+
+
+const journeyNearDestination =
+  (
+    stableRemainingMetres !== null &&
+    stableRemainingMetres <=
+      NEAR_DESTINATION_METRES
+  ) ||
+  directDestinationDistanceMetres <=
+    NEAR_DESTINATION_METRES;
 
   const formatDistance = (distanceInMetres) => {
     if (distanceInMetres === null) {
@@ -1148,28 +1210,35 @@ useEffect(() => {
       )}
       
       {(visibleRouteCoordinates.length > 1 ||
-  journeyArrived) && (
+  journeyArrived ||
+  journeyNearDestination) && (
   <div className="route-summary">
     <div className="route-summary-card">
       <span>
-        {journeyArrived
-          ? "✅ Destination"
-          : "⏱ Estimated Time Left"}
-      </span>
+  {journeyArrived
+    ? "✅ Destination"
+    : journeyNearDestination
+      ? "📍 Near Destination"
+      : "⏱ Estimated Time Left"}
+</span>
 
       <strong>
-        {journeyArrived
-          ? "Arrived"
-          : formatWalkingDuration(
-              estimatedRemainingDuration
-            )}
-      </strong>
+  {journeyArrived
+    ? "Arrived"
+    : journeyNearDestination
+      ? "Almost there"
+      : formatWalkingDuration(
+          estimatedRemainingDuration
+        )}
+</strong>
 
       <small>
-        {journeyArrived
-          ? "You have reached your destination."
-          : "Based on the pedestrian route returned by NightGuard."}
-      </small>
+  {journeyArrived
+    ? "You have reached your destination."
+    : journeyNearDestination
+      ? "If you have arrived at your address, confirm your arrival below."
+      : "Based on the pedestrian route returned by NightGuard."}
+</small>
     </div>
   </div>
 )}

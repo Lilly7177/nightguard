@@ -333,28 +333,135 @@ def save_location(data: LocationUpdate):
         ml_confidence = ml_prediction["confidence"]
 
 
-        # =================================================
+        # =========================================================
         # HYBRID AI DECISION
-        # =================================================
+        #
+        # Safety logic has priority over ML.
+        # ML supports uncertain situations but cannot create
+        # High/Critical risk by itself during normal walking.
+        # =========================================================
 
-        if ml_score > rule_score:
+        try:
+            ml_confidence_value = float(ml_confidence)
+        except (TypeError, ValueError):
+            ml_confidence_value = 0.0
 
-            final_score = ml_score
 
-            final_level = ml_level
+        # ---------------------------------------------------------
+        # 1. OFF-ROUTE
+        # ---------------------------------------------------------
 
+        if data.off_route:
+
+            final_score = 75
+            final_level = "High"
             final_reason = (
-                f"AI predicted {ml_level} risk "
-                f"with {ml_confidence}% confidence"
+                "User has moved away from the planned route "
+                "and confirmation is required"
             )
+
+
+        # ---------------------------------------------------------
+        # 2. PROLONGED STATIONARY BEHAVIOUR
+        # ---------------------------------------------------------
+
+        elif data.stationary_duration >= 120:
+
+            final_score = 75
+            final_level = "High"
+            final_reason = (
+                "User has been stationary for more than 2 minutes "
+                "and safety confirmation is required"
+            )
+
+
+        # ---------------------------------------------------------
+        # 3. DEVELOPING STATIONARY RISK
+        # ---------------------------------------------------------
+
+        elif data.stationary_duration >= 60:
+
+            final_score = 45
+            final_level = "Medium"
+            final_reason = (
+                "User has remained stationary for an extended period"
+            )
+
+
+        # ---------------------------------------------------------
+        # 4. NORMAL WALKING
+        # ---------------------------------------------------------
+
+        elif (
+            data.speed >= 0.30
+            and data.stationary_duration <= 15
+        ):
+
+            final_score = 10
+            final_level = "Low"
+            final_reason = (
+                "Normal walking behaviour detected"
+            )
+
+
+        # ---------------------------------------------------------
+        # 5. SHORT STOP / GPS UNCERTAINTY
+        # ---------------------------------------------------------
+
+        elif data.stationary_duration < 30:
+
+            final_score = 10
+            final_level = "Low"
+            final_reason = (
+                "Journey monitoring active"
+            )
+
+
+        # ---------------------------------------------------------
+        # 6. MODERATE STATIONARY PERIOD
+        # ---------------------------------------------------------
+
+        elif data.stationary_duration < 60:
+
+            final_score = 30
+            final_level = "Medium"
+            final_reason = (
+                "Temporary stationary behaviour detected"
+            )
+
+
+        # ---------------------------------------------------------
+        # 7. FALLBACK
+        # ---------------------------------------------------------
 
         else:
 
             final_score = rule_score
-
             final_level = rule_level
-
             final_reason = rule_reason
+
+
+        # =========================================================
+        # ML SUPPORT
+        #
+        # ML may raise an uncertain Low situation to Medium,
+        # but it cannot independently create High or Critical risk.
+        # =========================================================
+
+        if (
+            final_level == "Low"
+            and ml_level in ["Medium", "High", "Critical"]
+            and ml_confidence_value >= 75.0
+            and data.speed < 0.30
+            and data.stationary_duration >= 20
+        ):
+
+            final_score = 45
+            final_level = "Medium"
+            final_reason = (
+                "AI detected unusual journey behaviour "
+                f"with {ml_confidence_value:.1f}% confidence"
+            )
 
 
         # =================================================

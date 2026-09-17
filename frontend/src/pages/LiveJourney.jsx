@@ -142,14 +142,16 @@ function formatSpeed(
 }
 
 
-/*
- * Arrival is offered once the user has completed at least
- * 96% of the planned walking route. A ~50 metre proximity
- * fallback is retained for very short journeys / route noise.
- */
 const ARRIVAL_PROGRESS_THRESHOLD = 0.96;
-const ARRIVAL_THRESHOLD_MILES = 0.031;
 
+// Useful for postcode/address GPS differences.
+// Inside this area, NightGuard asks the user to confirm arrival
+// instead of treating stationary behaviour as a safety emergency.
+const NEAR_DESTINATION_METRES = 100;
+
+// Small grace period so one or two weak GPS fixes do not
+// immediately change a walking user into "stationary".
+const MOVEMENT_GRACE_MS = 8000;
 
 /*
  * Backend also protects the first
@@ -335,29 +337,75 @@ const [
 
 
   const journeyProgress =
-    totalDistance > 0 &&
-    Number.isFinite(totalDistance) &&
-    Number.isFinite(remainingDistance)
-      ? Math.max(
-          0,
-          Math.min(
-            1,
-            (totalDistance - remainingDistance) /
-              totalDistance
-          )
+  totalDistance > 0 &&
+  Number.isFinite(totalDistance) &&
+  Number.isFinite(remainingDistance)
+    ? Math.max(
+        0,
+        Math.min(
+          1,
+          (totalDistance - remainingDistance) /
+            totalDistance
         )
-      : 0;
+      )
+    : 0;
 
 
-  const hasReachedDestination =
-    journeyStarted &&
-    totalDistance > 0 &&
+// -------------------------------------------------
+// DESTINATION PROXIMITY
+// -------------------------------------------------
+
+const routeRemainingMetres =
+  totalDistance > 0 &&
+  Number.isFinite(remainingDistance)
+    ? remainingDistance * 1609.344
+    : Infinity;
+
+
+const directDestinationDistanceMetres =
+  currentLocation &&
+  Number.isFinite(
+    Number(destination?.latitude)
+  ) &&
+  Number.isFinite(
+    Number(destination?.longitude)
+  )
+    ? calculateDistanceMetres(
+        Number(currentLocation.latitude),
+        Number(currentLocation.longitude),
+        Number(destination.latitude),
+        Number(destination.longitude)
+      )
+    : Infinity;
+
+
+// Strong arrival condition.
+// Keep the existing 96% / ~50m rules,
+// but also use direct GPS distance.
+const hasReachedDestination =
+  journeyStarted &&
+  (
     (
+      totalDistance > 0 &&
       journeyProgress >=
-        ARRIVAL_PROGRESS_THRESHOLD ||
-      remainingDistance <=
-        ARRIVAL_THRESHOLD_MILES
-    );
+        ARRIVAL_PROGRESS_THRESHOLD
+    ) ||
+    routeRemainingMetres <= 50 ||
+    directDestinationDistanceMetres <= 50
+  );
+
+
+// Near destination is intentionally wider.
+// Useful when a postcode maps to a point slightly
+// away from the user's actual house.
+const isNearDestination =
+  journeyStarted &&
+  (
+    routeRemainingMetres <=
+      NEAR_DESTINATION_METRES ||
+    directDestinationDistanceMetres <=
+      NEAR_DESTINATION_METRES
+  );
 
 
   const watchIdRef =
@@ -373,10 +421,28 @@ const [
   useRef(0);
 
 
-  const stationaryStartedAtRef =
-    useRef(
-      Date.now()
-    );
+// Remember the last time GPS showed
+// believable walking movement.
+const lastMeaningfulMovementAtRef =
+  useRef(Date.now());
+
+
+// Keeps the last believable walking speed
+// through a short GPS interruption.
+const lastReliableWalkingSpeedRef =
+  useRef(0);
+
+
+const stationaryStartedAtRef =
+  useRef(
+    Date.now()
+  );
+
+
+// Long-lived GPS watcher needs access to
+// the latest destination-proximity state.
+const nearDestinationRef =
+  useRef(false);
 
 
   const lastBackendUpdateRef =
@@ -439,6 +505,11 @@ const [
   useEffect(() => {
     warmupActiveRef.current = warmupActive;
   }, [warmupActive]);
+
+  useEffect(() => {
+  nearDestinationRef.current =
+    isNearDestination;
+}, [isNearDestination]);
 
 
   const showMessage = (
@@ -508,41 +579,67 @@ const [
   }, []);
 
 
-  // =========================================
+// =========================================
 // STATIONARY DISPLAY TIMER
-// Updates the UI every second
 // =========================================
 
 useEffect(() => {
-  const stationaryTimer = setInterval(() => {
+  const stationaryTimer =
+    setInterval(() => {
 
-    /*
-     * While walking is currently confirmed,
-     * keep Stationary Time at 00:00.
-     */
-    if (
-      movementConfirmationRef.current >= 2
-    ) {
-      setStationaryDuration(0);
-      return;
-    }
+      // Do not display stationary time
+      // during initial GPS calibration.
+      if (warmupActiveRef.current) {
+        setStationaryDuration(0);
+        return;
+      }
 
-    if (stationaryStartedAtRef.current) {
-      const seconds = Math.floor(
-        (
-          Date.now() -
-          stationaryStartedAtRef.current
-        ) / 1000
-      );
 
-      setStationaryDuration(seconds);
-    }
+      const recentlyMoving =
+        Date.now() -
+          lastMeaningfulMovementAtRef.current <=
+        MOVEMENT_GRACE_MS;
 
-  }, 1000);
+
+      /*
+       * If walking was confirmed recently,
+       * one or two poor GPS fixes should not
+       * immediately start Stationary Time.
+       */
+      if (
+        movementConfirmationRef.current >= 2 ||
+        recentlyMoving
+      ) {
+        setStationaryDuration(0);
+        return;
+      }
+
+
+      if (
+        stationaryStartedAtRef.current
+      ) {
+        const seconds =
+          Math.floor(
+            (
+              Date.now() -
+              stationaryStartedAtRef.current
+            ) / 1000
+          );
+
+        setStationaryDuration(
+          seconds
+        );
+      }
+
+    }, 1000);
+
 
   return () => {
-    clearInterval(stationaryTimer);
+    clearInterval(
+      stationaryTimer
+    );
   };
+
 }, []);
 
 
@@ -990,12 +1087,33 @@ const possibleMovement =
 
 
 if (possibleMovement) {
+
   movementConfirmationRef.current =
     Math.min(
       movementConfirmationRef.current + 1,
       3
     );
+
+
+  // Remember that genuine movement
+  // was observed.
+  lastMeaningfulMovementAtRef.current =
+    Date.now();
+
+
+  // Keep the most recent believable
+  // walking speed available during a
+  // short GPS interruption.
+  if (
+    Number.isFinite(calculatedSpeed) &&
+    calculatedSpeed > 0.2
+  ) {
+    lastReliableWalkingSpeedRef.current =
+      calculatedSpeed;
+  }
+
 } else {
+
   movementConfirmationRef.current =
     Math.max(
       movementConfirmationRef.current - 1,
@@ -1003,17 +1121,44 @@ if (possibleMovement) {
     );
 }
 
-const meaningfulMovement =
-  movementConfirmationRef.current >= 2;
+const recentlyMoving =
+  Date.now() -
+    lastMeaningfulMovementAtRef.current <=
+  MOVEMENT_GRACE_MS;
 
+const meaningfulMovement =
+  movementConfirmationRef.current >= 2 ||
+  recentlyMoving;
 
 if (meaningfulMovement) {
+
   stationaryStartedAtRef.current =
     Date.now();
 
   stationarySeconds = 0;
+
+
+  /*
+   * If GPS briefly reports zero while
+   * walking was recently confirmed,
+   * keep the last believable walking
+   * speed during the short grace period.
+   */
+  if (
+    calculatedSpeed <= 0 &&
+    lastReliableWalkingSpeedRef.current > 0
+  ) {
+    calculatedSpeed =
+      lastReliableWalkingSpeedRef.current;
+  }
+
 } else {
+
   calculatedSpeed = 0;
+
+  lastReliableWalkingSpeedRef.current =
+    0;
+
 
   stationarySeconds =
     Math.floor(
@@ -1059,12 +1204,14 @@ if (warmupActiveRef.current) {
 
 
             if (
-              !warmupActiveRef.current &&
-              stationarySeconds >=
-                120 &&
-              !showSOSRef.current &&
-              cooldownFinished
-            ) {
+  !warmupActiveRef.current &&
+  stationarySeconds >=
+    120 &&
+  !showSOSRef.current &&
+  cooldownFinished &&
+  !nearDestinationRef.current
+) {
+
               showSOSRef.current = true;
 
               setShowSOS(
@@ -1952,32 +2099,46 @@ rerouteRequestKey={
             ARRIVAL INFORMATION
         ================================= */}
 
-        {hasReachedDestination && (
-          <section className="journey-arrival-message">
+        
+        {(hasReachedDestination ||
+  isNearDestination) && (
 
-            <span>
-              ✅
-            </span>
+  <section className="journey-arrival-message">
 
-            <div>
-              <strong>
-                Destination Reached
-              </strong>
+    <span>
+      ✅
+    </span>
 
-              <p>
-                You are within about
-                50 metres of your
-                destination. Confirm that
-                you arrived safely.
-              </p>
+    <div>
 
-              <small className="journey-arrival-progress">
-                Route progress: {Math.round(journeyProgress * 100)}%
-              </small>
-            </div>
+      <strong>
+        {
+          hasReachedDestination
+            ? "Destination Reached"
+            : "Close to Destination"
+        }
+      </strong>
 
-          </section>
+      <p>
+        {
+          hasReachedDestination
+            ? "You are very close to your destination. Confirm that you arrived safely."
+            : "You are close to your selected destination. If you have arrived at your address, confirm below."
+        }
+      </p>
+
+      <small className="journey-arrival-progress">
+        Route progress:{" "}
+        {Math.round(
+          journeyProgress * 100
         )}
+        %
+      </small>
+
+    </div>
+
+  </section>
+)}
 
 
 
@@ -1990,48 +2151,67 @@ rerouteRequestKey={
 
           <div className="journey-action-row">
 
+<button
+  type="button"
 
-            <button
-              type="button"
-
-              className={
-                `journey-complete-btn ${
-                  hasReachedDestination
-                    ? "journey-reached-btn"
-                    : ""
-                }`
-              }
-
-              onClick={() => {
-  if (hasReachedDestination) {
-    endJourney();
-    return;
+  className={
+    `journey-complete-btn ${
+      hasReachedDestination
+        ? "journey-reached-btn"
+        : ""
+    }`
   }
 
-  const confirmed =
-    window.confirm(
-      "Do you want to end this monitored journey?"
-    );
+  onClick={() => {
 
-  if (confirmed) {
-    endJourney();
+    if (hasReachedDestination) {
+      endJourney();
+      return;
+    }
+
+
+    if (isNearDestination) {
+
+      const confirmed =
+        window.confirm(
+          "You are close to your destination. Have you arrived safely?"
+        );
+
+      if (confirmed) {
+        endJourney();
+      }
+
+      return;
+    }
+
+
+    const confirmed =
+      window.confirm(
+        "Do you want to end this monitored journey?"
+      );
+
+
+    if (confirmed) {
+      endJourney();
+    }
+  }}
+
+  disabled={
+    ending
   }
-}}
+>
 
-              disabled={
-                ending
-              }
-            >
+  {
+    ending
+      ? "Ending Journey..."
+      : hasReachedDestination
+        ? "✅ Reached Safely"
+        : isNearDestination
+          ? "✅ I've Arrived"
+          : "🏁 End Journey"
+  }
 
-              {
-                ending
-                  ? "Ending Journey..."
-                  : hasReachedDestination
-                    ? "✅ Reached Safely"
-                    : "🏁 End Journey"
-              }
-
-            </button>
+</button>
 
 
 
