@@ -161,8 +161,16 @@ const MOVEMENT_GRACE_MS = 8000;
 const WARMUP_SECONDS =
   30;
 
-
 function LiveJourney() {
+
+  useEffect(() => {
+    console.log("LIVE JOURNEY MOUNTED");
+
+    return () => {
+      console.log("LIVE JOURNEY UNMOUNTED");
+    };
+  }, []);
+
   const navigate =
     useNavigate();
 
@@ -216,16 +224,15 @@ function LiveJourney() {
   );
 
 
-  const [
-    aiRiskLevel,
-    setAiRiskLevel
-  ] = useState("Low");
+const [
+  aiRiskLevel,
+  setAiRiskLevel
+] = useState(null);
 
-
-  const [
-    aiConfidence,
-    setAiConfidence
-  ] = useState(0);
+const [
+  aiConfidence,
+  setAiConfidence
+] = useState(null);
 
 
   const [
@@ -580,68 +587,89 @@ const nearDestinationRef =
 
 
 // =========================================
-// STATIONARY DISPLAY TIMER
+// STATIONARY TIMER + SAFETY CHECK
 // =========================================
 
 useEffect(() => {
-  const stationaryTimer =
-    setInterval(() => {
+  const stationaryTimer = window.setInterval(() => {
 
-      // Do not display stationary time
-      // during initial GPS calibration.
-      if (warmupActiveRef.current) {
-        setStationaryDuration(0);
-        return;
-      }
+    // Ignore stationary behaviour during
+    // the initial GPS warm-up period.
+    if (warmupActiveRef.current) {
+      setStationaryDuration(0);
+      return;
+    }
 
+    const recentlyMoving =
+      Date.now() -
+        lastMeaningfulMovementAtRef.current <=
+      MOVEMENT_GRACE_MS;
 
-      const recentlyMoving =
-        Date.now() -
-          lastMeaningfulMovementAtRef.current <=
-        MOVEMENT_GRACE_MS;
+    // If genuine movement was recently
+    // detected, the user is not stationary.
+    if (
+      movementConfirmationRef.current >= 2 ||
+      recentlyMoving
+    ) {
+      setStationaryDuration(0);
+      return;
+    }
 
+    if (!stationaryStartedAtRef.current) {
+      return;
+    }
 
-      /*
-       * If walking was confirmed recently,
-       * one or two poor GPS fixes should not
-       * immediately start Stationary Time.
-       */
-      if (
-        movementConfirmationRef.current >= 2 ||
-        recentlyMoving
-      ) {
-        setStationaryDuration(0);
-        return;
-      }
+    const seconds =
+      Math.floor(
+        (
+          Date.now() -
+          stationaryStartedAtRef.current
+        ) / 1000
+      );
 
+    setStationaryDuration(seconds);
 
-      if (
-        stationaryStartedAtRef.current
-      ) {
-        const seconds =
-          Math.floor(
-            (
-              Date.now() -
-              stationaryStartedAtRef.current
-            ) / 1000
-          );
+    // -----------------------------------------
+    // SAFETY CHECK AFTER 2 MINUTES STATIONARY
+    // -----------------------------------------
 
-        setStationaryDuration(
-          seconds
-        );
-      }
+    const cooldownFinished =
+      Date.now() -
+        lastSafetyConfirmationRef.current >
+      5 * 60 * 1000;
 
-    }, 1000);
+    if (
+      seconds >= 120 &&
+      !showSOSRef.current &&
+      cooldownFinished &&
+      !nearDestinationRef.current
+    ) {
+      // Update ref immediately to prevent
+      // this timer opening the popup twice.
+      showSOSRef.current = true;
 
+      setShowSOS(true);
+
+      setRiskScore(75);
+      setRiskLevel("High");
+
+      setRiskReason(
+        "User stationary for more than 2 minutes"
+      );
+
+      showMessage(
+        "You have been stationary for more than 2 minutes. Please confirm that you are safe.",
+        "warning"
+      );
+    }
+
+  }, 1000);
 
   return () => {
-    clearInterval(
-      stationaryTimer
-    );
+    window.clearInterval(stationaryTimer);
   };
 
 }, []);
-
 
   // =========================================
   // SEND LOCATION TO BACKEND
@@ -748,15 +776,14 @@ useEffect(() => {
 
 
         setAiRiskLevel(
-          aiPrediction.risk_level ||
-            "Low"
-        );
+  aiPrediction.risk_level ??
+    null
+);
 
-
-        setAiConfidence(
-          aiPrediction.confidence ??
-            0
-        );
+setAiConfidence(
+  aiPrediction.confidence ??
+    null
+);
 
 
         /*
@@ -895,7 +922,7 @@ useEffect(() => {
                 newLocation.accuracy
               ) &&
               newLocation.accuracy >
-                100
+                200
             ) {
               console.log(
                 "Ignoring inaccurate GPS reading:",
@@ -1193,48 +1220,7 @@ if (warmupActiveRef.current) {
 }
 
 
-            /*
-             * Safety check after 2 minutes
-             * stationary.
-             */
-            const cooldownFinished =
-              Date.now() -
-                lastSafetyConfirmationRef.current >
-              5 * 60 * 1000;
-
-
-            if (
-  !warmupActiveRef.current &&
-  stationarySeconds >=
-    120 &&
-  !showSOSRef.current &&
-  cooldownFinished &&
-  !nearDestinationRef.current
-) {
-
-              showSOSRef.current = true;
-
-              setShowSOS(
-                true
-              );
-
-              setRiskScore(
-                75
-              );
-
-              setRiskLevel(
-                "High"
-              );
-
-              setRiskReason(
-                "User stationary for more than 2 minutes"
-              );
-
-              showMessage(
-                "You have been stationary for more than 2 minutes. Please confirm that you are safe.",
-                "warning"
-              );
-            }
+    
 
 
             sendLocationToBackend(
@@ -2062,16 +2048,13 @@ rerouteRequestKey={
 
 
               <span>
-                Confidence:{" "}
-                <b>
-                  {
-                    Number(
-                      aiConfidence
-                    ).toFixed(1)
-                  }
-                  %
-                </b>
-              </span>
+  Confidence:{" "}
+  <b>
+    {aiConfidence == null
+      ? "Pending"
+      : `${Number(aiConfidence).toFixed(1)}%`}
+  </b>
+</span>
 
             </div>
 

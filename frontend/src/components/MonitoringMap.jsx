@@ -526,6 +526,15 @@ function MonitoringMap({
   onOffRouteChange,
   rerouteRequestKey = 0
 }) {
+
+  useEffect(() => {
+    console.log("MONITORING MAP MOUNTED");
+
+    return () => {
+      console.log("MONITORING MAP UNMOUNTED");
+    };
+  }, []);
+
   const [routeCoordinates, setRouteCoordinates] = useState([]);
   const [routeInformation, setRouteInformation] = useState({
     distanceMetres: null,
@@ -635,15 +644,7 @@ const currentUserIcon =
     [currentPosition, routeCoordinates, cumulativeRouteDistances]
   );
 
-  const visibleRouteCoordinates = useMemo(
-    () =>
-      createVisibleRoute(
-        currentPosition,
-        routeCoordinates,
-        currentProjection
-      ),
-    [currentPosition, routeCoordinates, currentProjection]
-  );
+  const visibleRouteCoordinates = routeCoordinates;
 
   const clearOffRouteState = useCallback(() => {
     offRouteStartedAtRef.current = null;
@@ -680,10 +681,25 @@ const currentUserIcon =
         );
 
         if (requestId !== requestSequenceRef.current) {
-          return;
-        }
+  console.log(
+    "ROUTE IGNORED:",
+    "requestId =", requestId,
+    "latest =", requestSequenceRef.current
+  );
+  return;
+}
 
-        setRouteCoordinates(route.coordinates);
+console.log("ABOUT TO SAVE ROUTE:", {
+  reason,
+  requestId,
+  latestRequest: requestSequenceRef.current,
+  points: route.coordinates.length,
+  distance: route.distanceMetres
+});
+
+setRouteCoordinates(route.coordinates);
+
+console.log("SET ROUTE CALLED");
         setRouteInformation({
           distanceMetres: route.distanceMetres,
           durationSeconds: route.durationSeconds
@@ -730,21 +746,30 @@ const currentUserIcon =
 
         clearOffRouteState();
       } catch (error) {
-        if (error?.name === "AbortError") {
-          return;
-        }
+  if (error?.name === "AbortError") {
+    return;
+  }
 
-        console.error("Walking route calculation error:", error);
+  console.error(
+    "Walking route calculation error:",
+    error
+  );
 
-        setRouteError(
-          error?.message ||
-            "Unable to calculate the pedestrian route to this destination."
-        );
+  setRouteError(
+    error?.message ||
+      "Unable to calculate the pedestrian route to this destination."
+  );
 
-        if (reason === "off-route") {
-          reroutePendingRef.current = false;
-        }
-      } finally {
+  // Allow the initial route request to be tried again
+  // if the first request fails.
+  if (reason === "initial") {
+    initialRouteRequestedRef.current = false;
+  }
+
+  if (reason === "off-route") {
+    reroutePendingRef.current = false;
+  }
+}finally {
         if (requestId === requestSequenceRef.current) {
           setLoadingRoute(false);
         }
@@ -800,25 +825,25 @@ const currentUserIcon =
     onTotalDistanceChange
   ]);
 
-  // Fetch only the initial route. Normal GPS movement does not trigger this.
-  useEffect(() => {
-    if (
-      currentPosition &&
-      destinationPosition &&
-      routeCoordinates.length === 0 &&
-      !loadingRoute &&
-      !initialRouteRequestedRef.current
-    ) {
-      initialRouteRequestedRef.current = true;
-      requestRoute({ reason: "initial" });
-    }
-  }, [
-    currentPosition,
-    destinationPosition,
-    loadingRoute,
-    requestRoute,
-    routeCoordinates.length
-  ]);
+  // Fetch the initial route once when valid start and destination positions exist.
+useEffect(() => {
+  if (
+    !currentPosition ||
+    !destinationPosition ||
+    initialRouteRequestedRef.current
+  ) {
+    return;
+  }
+
+  initialRouteRequestedRef.current = true;
+
+  requestRoute({
+    reason: "initial"
+  });
+}, [
+  destinationPosition,
+  requestRoute
+]);
 
   // Calculate progress and remaining distance locally from the existing route.
   useEffect(() => {
